@@ -1,5 +1,4 @@
-import React from 'react';
-const { useRef, useState, useCallback } = React;
+import { useRef, useState, useCallback } from 'react';
 
 /** @description force render function */
 export const useForceRender = () => {
