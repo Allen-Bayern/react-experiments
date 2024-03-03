@@ -4,17 +4,18 @@ import { useForceRender } from '@/hooks';
 
 import styles from './_app-style.module.scss';
 
-const { useRef } = React;
+const { useRef, useCallback } = React;
+
 const App: React.FC = () => {
     const { forceRender } = useForceRender();
     const countNumber = useRef(0);
 
-    const addOne = () => {
+    const addOne = useCallback(() => {
         countNumber.current += 1;
         if (!(countNumber.current % 5)) {
             forceRender();
         }
-    };
+    }, []);
 
     return (
         <div className={styles.container}>

@@ -1,6 +1,6 @@
 import { useRef, useState, useCallback } from 'react';
 
-/** @description force render function */
+/** @description force render hook */
 export const useForceRender = () => {
     const currentStatus = useRef(false);
     const [currentNum, setCurrentNum] = useState(+currentStatus.current);
