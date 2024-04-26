@@ -1,1 +1,1 @@
-export { useForceRender } from './UseForceRender';
+export { useForceUpdate } from './UseForceUpdate';
