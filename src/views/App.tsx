@@ -1,7 +1,13 @@
 import React from 'react';
+import { Button, Rate } from 'antd';
 
 function App() {
-    return <div className="App">Hello World</div>;
+    return (
+        <>
+            <Button>Hello world</Button>
+            <Rate />
+        </>
+    );
 }
 
 export default App;
