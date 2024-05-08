@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react';
+import { useRef, useCallback } from 'react';
 
 // eslint-disable-next-line no-unused-vars
 type noop = (this: any, ...args: any[]) => any;
@@ -12,7 +12,7 @@ type PickFunction<T extends noop> = (this: ThisParameterType<T>, ...args: Parame
  * @returns function used
  */
 export function useFunction<Func extends noop>(method: Func): Func {
-    const memoisedMethod = useMemo<Func>(() => method, [method]);
+    const memoisedMethod = useCallback(method, [method]);
     const methodRef = useRef(memoisedMethod);
     methodRef.current = memoisedMethod;
 
