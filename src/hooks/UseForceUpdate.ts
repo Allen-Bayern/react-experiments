@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useBool } from './UseToggle';
 
 /**
  * @description
@@ -44,14 +44,4 @@ import { useState, useCallback } from 'react';
  * export default ExamplePage;
  * ```
  */
-
-export function useForceUpdate() {
-    const setCurrentDatum = useState(false)[1];
-
-    /** @description force update method */
-    const forceUpdateMethod = useCallback(() => {
-        setCurrentDatum(oldValue => !oldValue);
-    }, []);
-
-    return forceUpdateMethod;
-}
+export const useForceUpdate = () => useBool()[1];
