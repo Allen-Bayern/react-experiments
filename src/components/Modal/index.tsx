@@ -77,9 +77,7 @@ const Modal: CommonFWC<ModalProps, HTMLDialogElement> = (props, domRef) => {
                     inter = setInterval(() => {
                         if (transCount === 10 && inter) {
                             clearInterval(inter);
-                            timer = setTimeout(() => {
-                                dialogDOM.close();
-                            }, 100);
+                            timer = setTimeout(dialogDOM.close, 100);
                         }
 
                         updateDialogStyle(draft => {
