@@ -1,4 +1,4 @@
-import type { CSSProperties, FC } from 'react';
+import type { CSSProperties, FC, ForwardRefRenderFunction, PropsWithChildren } from 'react';
 
 export type CommonProps = Partial<{
     className: string;
@@ -6,3 +6,7 @@ export type CommonProps = Partial<{
 }>;
 
 export type CommonComponents<P = {}> = FC<P & CommonProps>;
+
+export type FWC<P = {}, E = HTMLDivElement> = ForwardRefRenderFunction<E, PropsWithChildren<P>>;
+
+export type CommonFWC<P = {}, E = HTMLDivElement> = ForwardRefRenderFunction<E, PropsWithChildren<P & CommonProps>>;
