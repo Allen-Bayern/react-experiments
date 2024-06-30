@@ -1,0 +1,17 @@
+.y-modal {
+    padding: 0;
+    overflow: hidden;
+    border:none;
+    border-radius: 1rem;
+    transition: opacity 0.4s ease;
+
+    &::backdrop {
+        background-color: var(--var-backdrop-color, rgba(0, 0, 0, .7));
+    }
+
+    &-content {
+        padding: 1em;
+        width: 75vw;
+        height: 50vw;
+    }
+}

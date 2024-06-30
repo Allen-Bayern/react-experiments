@@ -1,29 +1,31 @@
 import React from 'react';
-import { useFunction } from '@/hooks';
+import { Modal } from '@/components';
 
-const { useState } = React;
+const { useState, useRef } = React;
 
 function App() {
-    const [countNum, setCountNum] = useState(0);
+    const [isModalShow, setIsModalShow] = useState(false);
 
-    // 记忆化函数
-    const addNum = useFunction(
-        (() => {
-            if (countNum >= 10) {
-                return () => {
-                    setCountNum(oldVal => oldVal + 1);
-                };
-            }
-            return () => {
-                setCountNum(oldVal => oldVal + 2);
-            };
-        })()
-    );
+    const modalRef = useRef<HTMLDialogElement | null>(null);
 
     return (
         <>
-            <p>{countNum}</p>
-            <button onClick={addNum}>+Num</button>
+            <button
+                onClick={() => {
+                    setIsModalShow(true);
+                }}
+            >
+                Open Modal
+            </button>
+            <Modal
+                visible={isModalShow}
+                onClickShadow={() => {
+                    setIsModalShow(false);
+                }}
+                ref={modalRef}
+            >
+                hello world
+            </Modal>
         </>
     );
 }

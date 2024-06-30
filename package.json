@@ -55,9 +55,10 @@
   "dependencies": {
     "ahooks": "^3.8.0",
     "antd": "^4.24.15",
+    "classnames": "^2.5.1",
     "compose-function": "^3.0.3",
     "core-js": "^3.36.0",
-    "immer": "^10.0.3",
+    "immer": "^9.0.21",
     "normalize.css": "^8.0.1",
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
