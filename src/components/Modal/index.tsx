@@ -9,8 +9,8 @@ const { forwardRef, useRef, useEffect } = React;
 export type ModalProps = {
     visible: boolean;
 } & Partial<{
-    contentClass: string;
-    contentStyle: CSSProperties;
+    rootClass: string;
+    rootStyle: CSSProperties;
     onClickShadow(): void;
 }>;
 
@@ -23,28 +23,32 @@ const Modal: CommonFWC<ModalProps, HTMLDialogElement> = (props, domRef) => {
         visible,
 
         // optional
-        contentClass = '',
-        contentStyle = emptyStyle,
+        rootClass = '',
+        rootStyle = emptyStyle,
         onClickShadow = null,
 
         // common
-        className: outerClass = '',
-        style: outerStyle,
+        className: innerClass = '',
+        style: innerStyle = emptyStyle,
         children,
     } = props;
 
     // dialog style
-    const [dialogStyle, updateDialogStyle] = useImmer({
-        opacity: 1,
-        '--var-backdrop-color': `rgba(0, 0, 0, ${BACKDROP_BASE})`,
-        ...outerStyle,
-    });
+    const [dialogStyle, updateDialogStyle] = useImmer<
+        CSSProperties & {
+            /** @description css var */
+            '--var-backdrop-color'?: string;
+        }
+    >({ ...rootStyle });
 
     // doms ref
     const innerRef = useRef<HTMLDialogElement | null>(null);
     const contentRef = useRef<HTMLDivElement | null>(null);
 
     const isFirstRender = useRef(true);
+
+    // save rootStyle
+    const rootStyleCached = useRef(rootStyle);
 
     // click shadow event
     const clickShadow: MouseEventHandler<HTMLDialogElement> = ev => {
@@ -57,6 +61,12 @@ const Modal: CommonFWC<ModalProps, HTMLDialogElement> = (props, domRef) => {
         }
     };
 
+    // update rootStyle
+    useEffect(() => {
+        rootStyleCached.current = rootStyle;
+    }, [rootStyle]);
+
+    // open and close effect
     useEffect(() => {
         let inter: ReturnType<typeof setInterval> | null = null;
         let timer: ReturnType<typeof setTimeout> | null = null;
@@ -74,10 +84,15 @@ const Modal: CommonFWC<ModalProps, HTMLDialogElement> = (props, domRef) => {
             } else {
                 if (!isFirstRender.current) {
                     let transCount = 1;
+
                     inter = setInterval(() => {
                         if (transCount === 10 && inter) {
                             clearInterval(inter);
-                            timer = setTimeout(dialogDOM.close, 100);
+
+                            timer = setTimeout(() => {
+                                dialogDOM.close();
+                                updateDialogStyle(rootStyleCached.current);
+                            }, 100);
                         }
 
                         updateDialogStyle(draft => {
@@ -118,13 +133,13 @@ const Modal: CommonFWC<ModalProps, HTMLDialogElement> = (props, domRef) => {
                     }
                 }
             }}
-            className={classNames(styles.yModal, outerClass)}
+            className={classNames(styles.yModal, rootClass)}
             style={dialogStyle satisfies CSSProperties}
             onClick={clickShadow}
         >
             <div
-                className={classNames(styles.yModalContent, contentClass)}
-                style={contentStyle}
+                className={classNames(styles.yModalContent, innerClass)}
+                style={innerStyle}
                 ref={contentRef}
             >
                 {children}
