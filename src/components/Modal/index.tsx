@@ -72,9 +72,8 @@ const Modal: CommonFWC<ModalProps, HTMLDialogElement> = (props, domRef) => {
 
                 dialogDOM.showModal();
             } else {
-                let transCount = 1;
-
                 if (!isFirstRender.current) {
+                    let transCount = 1;
                     inter = setInterval(() => {
                         if (transCount === 10 && inter) {
                             clearInterval(inter);
