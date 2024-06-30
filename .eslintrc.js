@@ -18,17 +18,12 @@ module.exports = {
     },
     plugins: ['react', 'prettier'],
     rules: {
-        'no-console': 'off',
-        indent: ['error', 4],
-        quotes: ['error', 'single'],
-        semi: ['error', 'always'],
-        'prettier/prettier': [
-            'error',
-            {},
-            {
-                usePrettierrc: true,
-            },
-        ],
-        'react/no-deprecated': 'off',
+        'no-console': 0,
+        indent: [2, 4],
+        quotes: [2, 'single'],
+        semi: [2, 'always'],
+        'prettier/prettier': [2, {}, { usePrettierrc: true }],
+        'react/no-deprecated': 0,
+        'react/prop-types': 0,
     },
 };
