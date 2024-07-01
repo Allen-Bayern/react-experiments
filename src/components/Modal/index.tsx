@@ -52,7 +52,7 @@ const Modal: CommonFWC<ModalProps, HTMLDialogElement> = (props, domRef) => {
 
     // click shadow event
     const clickShadow: MouseEventHandler<HTMLDialogElement> = ev => {
-        if (ev.target === contentRef.current) {
+        if (ev.target !== dialogRef.current) {
             return;
         }
 
