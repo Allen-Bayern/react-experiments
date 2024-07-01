@@ -36,13 +36,13 @@ const Modal: CommonFWC<ModalProps, HTMLDialogElement> = (props, domRef) => {
     // dialog style
     const [dialogStyle, updateDialogStyle] = useImmer<
         CSSProperties & {
-            /** @description css var */
+            /** @description The css var of the background color of the dialog's backdrop. */
             '--var-backdrop-color'?: string;
         }
     >({ ...rootStyle });
 
-    // doms ref
-    const innerRef = useRef<HTMLDialogElement | null>(null);
+    // refs of DOMs
+    const dialogRef = useRef<HTMLDialogElement | null>(null);
     const contentRef = useRef<HTMLDivElement | null>(null);
 
     const isFirstRender = useRef(true);
@@ -71,13 +71,14 @@ const Modal: CommonFWC<ModalProps, HTMLDialogElement> = (props, domRef) => {
         let inter: ReturnType<typeof setInterval> | null = null;
         let timer: ReturnType<typeof setTimeout> | null = null;
 
-        if (innerRef.current) {
-            const { current: dialogDOM } = innerRef;
+        if (dialogRef.current) {
+            const { current: dialogDOM } = dialogRef;
 
             if (visible) {
-                updateDialogStyle(draft => {
-                    draft.opacity = 1;
-                    draft['--var-backdrop-color'] = `rgba(0, 0, 0, ${BACKDROP_BASE})`;
+                updateDialogStyle({
+                    opacity: 1,
+                    ['--var-backdrop-color']: `rgba(0, 0, 0, ${BACKDROP_BASE})`,
+                    ...rootStyleCached.current,
                 });
 
                 dialogDOM.showModal();
@@ -91,7 +92,7 @@ const Modal: CommonFWC<ModalProps, HTMLDialogElement> = (props, domRef) => {
 
                             timer = setTimeout(() => {
                                 dialogDOM.close();
-                                updateDialogStyle(rootStyleCached.current);
+                                updateDialogStyle({});
                             }, 100);
                         }
 
@@ -124,7 +125,7 @@ const Modal: CommonFWC<ModalProps, HTMLDialogElement> = (props, domRef) => {
     return (
         <dialog
             ref={el => {
-                innerRef.current = el;
+                dialogRef.current = el;
                 if (domRef) {
                     if (typeof domRef === 'function') {
                         domRef(el);
