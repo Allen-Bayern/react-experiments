@@ -14,33 +14,15 @@ export function useSet<T>(val: Set<T> | T[] = []) {
                 return newSet;
             });
         },
-        batch(actionType: 'add' | 'delete', ...args: T[]) {
+        batchAction(actionType: 'add' | 'delete', ...args: T[]) {
             setS(oldValue => {
-                const valueList = [...Array.from(oldValue), ...args];
+                const oldValueList = Array.from(oldValue);
 
                 if (actionType === 'add') {
-                    return new Set(valueList);
+                    return new Set([...oldValueList, ...args]);
                 }
 
-                const newList: T[] = [];
-                valueList
-                    .reduce((map, v) => {
-                        if (map.has(v)) {
-                            const count = map.get(v) as number;
-                            map.set(v, 1 + count);
-                        } else {
-                            map.set(v, 1);
-                        }
-
-                        return map;
-                    }, new Map<T, number>())
-                    .forEach((count, v) => {
-                        if (count === 1) {
-                            newList.push(v);
-                        }
-                    });
-
-                return new Set(newList);
+                return new Set(oldValueList.filter(v => !args.includes(v)));
             });
         },
         clear() {
