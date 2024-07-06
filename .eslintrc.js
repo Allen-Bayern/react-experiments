@@ -7,7 +7,13 @@ module.exports = {
         es6: true,
         node: true,
     },
-    extends: ['eslint:recommended', 'plugin:react/recommended', 'prettier', 'plugin:prettier/recommended'],
+    extends: [
+        'eslint:recommended',
+        'plugin:react/recommended',
+        'prettier',
+        'plugin:prettier/recommended',
+        'plugin:react/jsx-runtime',
+    ],
     parser: '@typescript-eslint/parser',
     parserOptions: {
         ecmaVersion: 6,
