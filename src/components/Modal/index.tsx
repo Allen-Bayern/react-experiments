@@ -1,10 +1,8 @@
-import React, { type CSSProperties, type MouseEventHandler } from 'react';
+import { useRef, useEffect, forwardRef, memo, type CSSProperties, type MouseEventHandler } from 'react';
 import { useImmer } from 'use-immer';
 import classNames from 'classnames';
-import { type CommonFWC, emptyStyle } from '@/utils';
+import { emptyStyle, type CommonFWC } from '@/utils';
 import styles from './_style.module.scss';
-
-const { forwardRef, useRef, useEffect } = React;
 
 export type ModalProps = {
     visible: boolean;
@@ -16,7 +14,6 @@ export type ModalProps = {
 
 const BACKDROP_BASE = 0.7;
 
-/** @description Modal component using original `<dialog></dialog>` */
 const Modal: CommonFWC<ModalProps, HTMLDialogElement> = (props, domRef) => {
     const {
         // necessary
@@ -149,4 +146,5 @@ const Modal: CommonFWC<ModalProps, HTMLDialogElement> = (props, domRef) => {
     );
 };
 
-export default forwardRef(Modal);
+/** @description Modal component using original `<dialog>` */
+export default memo(forwardRef(Modal));
