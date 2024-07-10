@@ -1,10 +1,5 @@
 import { useRef, useCallback } from 'react';
-
-// eslint-disable-next-line no-unused-vars
-type noop = (this: any, ...args: any[]) => any;
-
-// eslint-disable-next-line no-unused-vars
-type PickFunction<T extends noop> = (this: ThisParameterType<T>, ...args: Parameters<T>) => ReturnType<T>;
+import type { noop, PickFunction } from './share';
 
 /**
  * @description a hook to use memoised function
