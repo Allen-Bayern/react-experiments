@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 
 /** 轮询 hook */
 export function usePolling(
@@ -11,9 +11,12 @@ export function usePolling(
     const { inter = 1000, isStartAtOnce = false } = opts;
 
     const [isStarted, setIsStarted] = useState(isStartAtOnce);
-
     const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const funcRef = useRef(f);
+
+    // to get the latest method
+    const savedFunc = useCallback(f, [f]);
+    const funcRef = useRef(savedFunc);
+    funcRef.current = savedFunc;
 
     function startPolling() {
         setIsStarted(true);
@@ -23,12 +26,9 @@ export function usePolling(
         if (timer.current) {
             clearTimeout(timer.current);
             timer.current = null;
+            setIsStarted(false);
         }
     }
-
-    useEffect(() => {
-        funcRef.current = f;
-    }, [f]);
 
     useEffect(
         function pollingFunc() {
@@ -37,6 +37,8 @@ export function usePolling(
                     funcRef.current();
                     pollingFunc();
                 }, inter);
+            } else {
+                stopPolling();
             }
 
             return stopPolling;

@@ -1,29 +1,31 @@
-import { useState, useRef } from 'react';
-import { Modal } from '@/components';
+import { useState } from 'react';
+import { usePolling } from '@/hooks';
 
 function App() {
-    const [isModalShow, setIsModalShow] = useState(false);
-    const modalRef = useRef<HTMLDialogElement | null>(null);
+    const [num, setNum] = useState(0);
+
+    const { startPolling, stopPolling } = usePolling(() => {
+        setNum(n => (n += 1));
+    });
 
     return (
-        <>
+        <div className="app-root">
             <button
-                onClick={() => {
-                    setIsModalShow(true);
-                }}
+                type="button"
+                onClick={startPolling}
             >
-                Open Modal
+                start polling
             </button>
-            <Modal
-                visible={isModalShow}
-                onClickShadow={() => {
-                    setIsModalShow(false);
-                }}
-                ref={modalRef}
+
+            <button
+                type="button"
+                onClick={stopPolling}
             >
-                hello world
-            </Modal>
-        </>
+                stop polling
+            </button>
+
+            <p>{num}</p>
+        </div>
     );
 }
 
