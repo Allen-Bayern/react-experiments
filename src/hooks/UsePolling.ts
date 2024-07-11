@@ -1,10 +1,12 @@
-import { useRef, useEffect, useState, useCallback } from 'react';
+import { useRef, useEffect, useState } from 'react';
 
 /** 轮询 hook */
 export function usePolling(
-    f: () => void,
+    f: () => void | Promise<void>,
     opts: Partial<{
+        /** 间隔 */
         inter: number;
+        /** 是否马上开始 */
         isStartAtOnce: boolean;
     }> = {}
 ) {
@@ -14,9 +16,10 @@ export function usePolling(
     const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     // to get the latest method
-    const savedFunc = useCallback(f, [f]);
-    const funcRef = useRef(savedFunc);
-    funcRef.current = savedFunc;
+    const funcRef = useRef(f);
+    useEffect(() => {
+        funcRef.current = f;
+    }, [f]);
 
     function startPolling() {
         setIsStarted(true);
@@ -35,10 +38,11 @@ export function usePolling(
             if (isStarted) {
                 timer.current = setTimeout(() => {
                     funcRef.current();
+                    if (timer.current) {
+                        clearTimeout(timer.current);
+                    }
                     pollingFunc();
                 }, inter);
-            } else {
-                stopPolling();
             }
 
             return stopPolling;
@@ -46,8 +50,5 @@ export function usePolling(
         [isStarted]
     );
 
-    return {
-        startPolling,
-        stopPolling,
-    };
+    return [startPolling, stopPolling] as const;
 }

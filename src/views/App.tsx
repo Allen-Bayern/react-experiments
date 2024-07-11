@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { usePolling } from '@/hooks';
 
 function App() {
     const [num, setNum] = useState(0);
 
-    const { startPolling, stopPolling } = usePolling(() => {
+    const num2 = useMemo(() => 2 * num, [num]);
+
+    const [startPolling, stopPolling] = usePolling(() => {
+        console.log(num2);
         setNum(n => (n += 1));
     });
 
