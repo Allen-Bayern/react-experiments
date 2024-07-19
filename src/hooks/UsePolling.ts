@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 
 /** 轮询 hook */
 export function usePolling(
@@ -7,45 +7,41 @@ export function usePolling(
         /** 间隔 */
         inter: number;
         /** 是否马上开始 */
-        isStartAtOnce: boolean;
+        immediate: boolean;
     }> = {}
 ) {
-    const { inter = 1000, isStartAtOnce = false } = opts;
+    const { inter = 1000, immediate = false } = opts;
 
-    const [isStarted, setIsStarted] = useState(isStartAtOnce);
+    const [isStarted, setIsStarted] = useState(immediate);
     const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    // to get the latest method
-    const funcRef = useRef(f);
-    useEffect(() => {
-        funcRef.current = f;
-    }, [f]);
-
-    function startPolling() {
-        setIsStarted(true);
-    }
-
-    function stopPolling() {
+    const clearTimer = useCallback(() => {
         if (timer.current) {
             clearTimeout(timer.current);
             timer.current = null;
-            setIsStarted(false);
         }
-    }
+    }, []);
+
+    const startPolling = useCallback(() => {
+        setIsStarted(true);
+    }, []);
+
+    const stopPolling = useCallback(() => {
+        setIsStarted(false);
+    }, []);
 
     useEffect(
         function pollingFunc() {
+            clearTimer();
+
             if (isStarted) {
-                timer.current = setTimeout(() => {
-                    funcRef.current();
-                    if (timer.current) {
-                        clearTimeout(timer.current);
-                    }
+                timer.current = setTimeout(async () => {
+                    await f();
                     pollingFunc();
                 }, inter);
             }
 
-            return stopPolling;
+            return clearTimer;
         },
         [isStarted]
     );
