@@ -1,47 +1,4 @@
 import { useBool } from './UseToggle';
 
-/**
- * @description
- * A hook for force updating.
- *
- * **How to use?**
- *
- * @example
- *
- * ```js
- * import React, { useRef, useEffect } from 'react';
- * import { useForceUpdate } from '@/hooks';
- *
- * function ExamplePage() {
- *   // call useForceUpdate to get forceUpdate method
- *   const forceUpdate = useForceUpdate();
- *
- *   const refValue = useRef(0);
- *
- *   function addOne() {
- *     if (!(refValue.current++ % 5)) {
- *       // When refValue.current % 5 === 0, update the page
- *       forceUpdate();
- *     }
- *   };
- *
- *   useEffect(() => {
- *     const interTimer = setInterval(() => {
- *       addOne();
- *       if (refValue.current === 200) {
- *         clearInterval(interTimer);
- *       }
- *     }, 200);
- *
- *     return () => {
- *       if (interTimer) clearInterval(interTimer);
- *     };
- *   }, []);
- *
- *   return <p>{refValue.current}</p>;
- * }
- *
- * export default ExamplePage;
- * ```
- */
+/** 强制渲染组件 */
 export const useForceUpdate = () => useBool()[1];

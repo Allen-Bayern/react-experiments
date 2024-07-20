@@ -1,10 +1,11 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 
 type UseCountOpts = Partial<{
     start: number | (() => number);
     step: number;
 }>;
 
+/** 计数器 */
 export function useCount(opts: UseCountOpts = {}) {
     const { start = 0, step = 1 } = opts;
 
@@ -25,9 +26,9 @@ export function useCount(opts: UseCountOpts = {}) {
 
     const [num, setNum] = useState(getNum);
 
-    const countMethod = useCallback(() => {
+    const countMethod = () => {
         setNum(oldNum => oldNum + step);
-    }, [step]);
+    };
 
     return [num, countMethod] as const;
 }
