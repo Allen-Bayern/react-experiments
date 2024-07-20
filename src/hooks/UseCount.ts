@@ -9,10 +9,6 @@ type UseCountOpts = Partial<{
 export function useCount(opts: UseCountOpts = {}) {
     const { start = 0, step = 1 } = opts;
 
-    if (!step) {
-        throw new Error('The step must not be 0 or NaN');
-    }
-
     const getNum = () => {
         let res = 0;
         if (typeof start === 'function') {
@@ -29,6 +25,10 @@ export function useCount(opts: UseCountOpts = {}) {
     const countMethod = () => {
         setNum(oldNum => oldNum + step);
     };
+
+    if (!step) {
+        throw new Error('The step must not be 0 or NaN');
+    }
 
     return [num, countMethod] as const;
 }
