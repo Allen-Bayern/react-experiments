@@ -1,6 +1,8 @@
+export { useCount } from './UseCount';
 export { useForceUpdate } from './UseForceUpdate';
 export { useFunction } from './UseFunction';
-export { use01, useBool, useToggle } from './UseToggle';
-export { useSet } from './UseSet';
+export { useList } from './UseList';
 export { usePolling } from './UsePolling';
-export { useList } from './useList';
+export { useSet } from './UseSet';
+export { useSortedNumList } from './UseSortedNumList';
+export { use01, useBool, useToggle } from './UseToggle';

@@ -28,8 +28,8 @@ export function useSet<T>(val: Set<T> | T[] = []) {
         clear() {
             setS(new Set<T>());
         },
-        cover(sv = initValue.current) {
-            setS(sv);
+        cover(sv: Set<T> | T[] = initValue.current) {
+            setS(new Set(sv));
         },
         delete(v: T) {
             setS(oldValue => {

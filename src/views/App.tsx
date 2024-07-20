@@ -1,15 +1,10 @@
-import { useEffect } from 'react';
-import { useList } from '@/hooks';
+import { useSortedNumList } from '@/hooks';
 import { getRandomInt } from '@/utils';
 
 const TO = 10000;
 
 function App() {
-    const [randomArray, methodsOfRandomArray] = useList<number[]>();
-
-    useEffect(() => {
-        console.log(randomArray);
-    }, [randomArray]);
+    const [randomArray, methodsOfRandomArray] = useSortedNumList();
 
     return (
         <div className="app-root">
@@ -51,43 +46,11 @@ function App() {
             <button
                 type="button"
                 onClick={() => {
-                    methodsOfRandomArray.insert(
-                        getRandomInt({
-                            to: TO,
-                        }),
-                        1
-                    );
-                }}
-            >
-                Insert to the second position
-            </button>
-
-            <button
-                type="button"
-                onClick={() => {
                     const deleted = methodsOfRandomArray.deleteAsIndex(2);
                     console.log(deleted);
                 }}
             >
                 Delete the third element of the array
-            </button>
-
-            <button
-                type="button"
-                onClick={() => {
-                    methodsOfRandomArray.sort((a, b) => a - b);
-                }}
-            >
-                Sort the array
-            </button>
-
-            <button
-                type="button"
-                onClick={() => {
-                    methodsOfRandomArray.shuffle();
-                }}
-            >
-                Shuffle the array
             </button>
 
             <div>
