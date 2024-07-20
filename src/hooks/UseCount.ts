@@ -12,7 +12,18 @@ export function useCount(opts: UseCountOpts = {}) {
         throw new Error('The step must not be 0 or NaN');
     }
 
-    const [num, setNum] = useState(start);
+    const getNum = () => {
+        let res = 0;
+        if (typeof start === 'function') {
+            res = start();
+        } else {
+            res = start;
+        }
+
+        return Number.isNaN(res) ? 0 : res;
+    };
+
+    const [num, setNum] = useState(getNum);
 
     const countMethod = useCallback(() => {
         setNum(oldNum => oldNum + step);
