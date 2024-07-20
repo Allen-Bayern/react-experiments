@@ -198,6 +198,9 @@ export function useList<List extends unknown[] = unknown[]>(list: List | null = 
             setArr(oldArray => deepFreeze([...oldArray].sort(sortCb) as unknown as Readonly<List>));
             return (clone(arr) as List).sort(sortCb);
         },
+        unique() {
+            setArr(oldArray => deepFreeze(Array.from(new Set(oldArray)) as unknown as Readonly<List>));
+        },
         unshift(v: List[number]) {
             setArr(oldArray => deepFreeze([v, ...oldArray] as unknown as Readonly<List>));
         },
