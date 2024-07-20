@@ -1,33 +1,116 @@
-import { useState, useMemo } from 'react';
-import { usePolling } from '@/hooks';
+import { useEffect } from 'react';
+import { useList } from '@/hooks';
+
+const { random, floor } = Math;
+
+function getRandomInt(
+    opts: Partial<{
+        from: number;
+        to: number;
+    }> = {}
+) {
+    const { from = 0, to = 100 } = opts;
+
+    if (to < from) {
+        throw new Error('The "to" should not be less than the "from".');
+    }
+
+    if (from === to && !from) {
+        return 0;
+    }
+
+    const maxRandom = random() * to;
+
+    if (maxRandom < from) {
+        return floor(from);
+    }
+
+    return floor(maxRandom);
+}
+
+const TO = 10000;
 
 function App() {
-    const [num, setNum] = useState(0);
+    const [randomArray, methodsOfRandomArray] = useList<number[]>();
 
-    const num2 = useMemo(() => 2 * num, [num]);
-
-    const [startPolling, stopPolling] = usePolling(() => {
-        console.log(num2);
-        setNum(n => (n += 1));
-    });
+    useEffect(() => {
+        console.log(randomArray);
+    }, [randomArray]);
 
     return (
         <div className="app-root">
             <button
                 type="button"
-                onClick={startPolling}
+                onClick={() => {
+                    const cur = getRandomInt({
+                        to: TO,
+                    });
+                    let numPushed = cur;
+                    if (randomArray.includes(cur)) {
+                        numPushed += 1;
+                    }
+
+                    methodsOfRandomArray.push(numPushed);
+                }}
             >
-                start polling
+                Add a random number to array
             </button>
 
             <button
                 type="button"
-                onClick={stopPolling}
+                onClick={() => {
+                    methodsOfRandomArray.clear();
+                }}
             >
-                stop polling
+                Clear the array
             </button>
 
-            <p>{num}</p>
+            <button
+                type="button"
+                onClick={() => {
+                    methodsOfRandomArray.insert(
+                        getRandomInt({
+                            to: TO,
+                        }),
+                        1
+                    );
+                }}
+            >
+                Insert to the second position
+            </button>
+
+            <button
+                type="button"
+                onClick={() => {
+                    const deleted = methodsOfRandomArray.deleteAsIndex(2);
+                    console.log(deleted);
+                }}
+            >
+                Delete the third element of the array
+            </button>
+
+            <button
+                type="button"
+                onClick={() => {
+                    methodsOfRandomArray.sort((a, b) => a - b);
+                }}
+            >
+                Sort the array
+            </button>
+
+            <div>
+                {randomArray.map(int => (
+                    <span
+                        key={int}
+                        style={{
+                            marginLeft: '8px',
+                            marginRight: '8px',
+                        }}
+                    >
+                        {int}
+                    </span>
+                ))}
+            </div>
         </div>
     );
 }

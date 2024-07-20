@@ -6,3 +6,6 @@ export type PickFunction<T extends noop> = (this: ThisParameterType<T>, ...args:
 
 // eslint-disable-next-line
 export type BaseFunc = (...args: any[]) => any;
+
+// array element type
+export type ArrayElement<T> = T extends (infer U)[] ? U : never;
