@@ -1,32 +1,6 @@
 import { useEffect } from 'react';
 import { useList } from '@/hooks';
-
-const { random, floor } = Math;
-
-function getRandomInt(
-    opts: Partial<{
-        from: number;
-        to: number;
-    }> = {}
-) {
-    const { from = 0, to = 100 } = opts;
-
-    if (to < from) {
-        throw new Error('The "to" should not be less than the "from".');
-    }
-
-    if (from === to && !from) {
-        return 0;
-    }
-
-    const maxRandom = random() * to;
-
-    if (maxRandom < from) {
-        return floor(from);
-    }
-
-    return floor(maxRandom);
-}
+import { getRandomInt } from '@/utils';
 
 const TO = 10000;
 
@@ -68,6 +42,15 @@ function App() {
             <button
                 type="button"
                 onClick={() => {
+                    methodsOfRandomArray.filter(v => v > 2000);
+                }}
+            >
+                Filter the value more than 2000
+            </button>
+
+            <button
+                type="button"
+                onClick={() => {
                     methodsOfRandomArray.insert(
                         getRandomInt({
                             to: TO,
@@ -96,6 +79,15 @@ function App() {
                 }}
             >
                 Sort the array
+            </button>
+
+            <button
+                type="button"
+                onClick={() => {
+                    methodsOfRandomArray.shuffle();
+                }}
+            >
+                Shuffle the array
             </button>
 
             <div>
