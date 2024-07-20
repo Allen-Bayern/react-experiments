@@ -8,8 +8,8 @@ export function useList<List extends unknown[] = unknown[]>(list: List | null = 
     const initValue = useRef(Array.isArray(list) ? list : ([] as unknown[] as List));
     const [arr, setArr] = useState(deepFreeze(initValue.current) as Readonly<List>);
 
-    const append = (v: List[number]) => {
-        setArr(oldArray => deepFreeze([...oldArray, v] as List) as Readonly<List>);
+    const append = (...v: List) => {
+        setArr(oldArray => deepFreeze([...oldArray, ...v] as List) as Readonly<List>);
     };
 
     const extend = (l: List) => {
@@ -206,6 +206,38 @@ export function useList<List extends unknown[] = unknown[]>(list: List | null = 
         },
         unshift(v: List[number]) {
             setArr(oldArray => deepFreeze([v, ...oldArray] as unknown as Readonly<List>));
+        },
+        updateAsIndex(v: List[number], i = 0) {
+            if (i < -arr.length || i >= arr.length) {
+                throw new Error(
+                    'The first parameter i MUST not be more than or equal to the length of the array or be less than the (0 - array.length)'
+                );
+            }
+
+            // calculate real index
+            let realIndex = i;
+            if (i < 0) {
+                realIndex = arr.length + i;
+            }
+
+            if (realIndex === arr.length - 1) {
+                setArr(oldArray => deepFreeze([...oldArray.slice(0, -1), v] as unknown as Readonly<List>));
+                return;
+            }
+
+            if (!realIndex) {
+                setArr(oldArray => deepFreeze([v, ...oldArray.slice(1)] as unknown as Readonly<List>));
+                return;
+            }
+
+            setArr(oldArray =>
+                deepFreeze([
+                    ...oldArray.slice(0, realIndex),
+                    v,
+                    ...oldArray.slice(realIndex + 1),
+                ] as unknown as Readonly<List>)
+            );
+            return;
         },
     };
 

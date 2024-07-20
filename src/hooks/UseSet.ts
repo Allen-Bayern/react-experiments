@@ -43,6 +43,9 @@ export function useSet<T>(val: Set<T> | T[] = []) {
         reset() {
             setS(initValue.current);
         },
+        toArray() {
+            return Array.from(s);
+        },
         toggle(v: T) {
             setS(oldValue => {
                 const newSet = new Set(oldValue);
