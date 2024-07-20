@@ -35,6 +35,9 @@ export function useList<List extends unknown[] = unknown[]>(list: List | null = 
         clear() {
             setArr([] as unknown as Readonly<List>);
         },
+        cover(l: List) {
+            setArr(deepFreeze(l) as Readonly<List>);
+        },
         deleteAsIndex(i: number) {
             if (i < -arr.length || i > arr.length) {
                 throw new Error(
