@@ -24,10 +24,17 @@ export function useSortedNumList(list: number[] = [], sortMethod = (a: number, b
     ] = useList(list);
 
     const [newNumList, setNewNumList] = useState<typeof list>([]);
+    const [isReversed, setIsReversed] = useState(false);
 
     useEffect(() => {
-        setNewNumList([...numList].sort(sortMethod));
-    }, [numList]);
+        let sortedNumList = [...numList].sort(sortMethod);
+
+        if (isReversed) {
+            sortedNumList = [...numList].sort(sortMethod).reverse();
+        }
+
+        setNewNumList(sortedNumList);
+    }, [numList, isReversed]);
 
     return [
         newNumList,
@@ -67,7 +74,7 @@ export function useSortedNumList(list: number[] = [], sortMethod = (a: number, b
             pop,
             reset,
             reverse() {
-                setNewNumList(oldList => [...oldList].reverse());
+                setIsReversed(oldValue => !oldValue);
             },
             shift,
             // 复写toCopied

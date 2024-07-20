@@ -53,6 +53,15 @@ function App() {
                 Delete the third element of the array
             </button>
 
+            <button
+                type="button"
+                onClick={() => {
+                    methodsOfRandomArray.reverse();
+                }}
+            >
+                Reverse
+            </button>
+
             <div>
                 {randomArray.map(int => (
                     <span
