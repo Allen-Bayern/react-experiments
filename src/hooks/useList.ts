@@ -8,6 +8,31 @@ export function useList<List extends unknown[] = unknown[]>(list: List | null = 
     const initValue = useRef(Array.isArray(list) ? list : ([] as unknown[] as List));
     const [arr, setArr] = useState(deepFreeze(initValue.current) as Readonly<List>);
 
+    const getRealIndex = (
+        i: number,
+        opts: Partial<{
+            upper: number;
+            lower: number;
+            errorInfo: string;
+        }> = {}
+    ) => {
+        const {
+            upper = arr.length - 1,
+            lower = -arr.length,
+            errorInfo = 'The first parameter i MUST not be more than or equal to the length of the array or be less than the (0 - array.length)',
+        } = opts;
+
+        if (i < lower || i > upper) {
+            throw new Error(errorInfo);
+        }
+
+        if (i < 0) {
+            return arr.length + i;
+        }
+
+        return i;
+    };
+
     const append = (...v: List) => {
         setArr(oldArray => deepFreeze([...oldArray, ...v] as List) as Readonly<List>);
     };
@@ -39,22 +64,12 @@ export function useList<List extends unknown[] = unknown[]>(list: List | null = 
             setArr(deepFreeze(l) as Readonly<List>);
         },
         deleteAsIndex(i: number) {
-            if (i < -arr.length || i > arr.length) {
-                throw new Error(
-                    'The first parameter i MUST not be more than the length of the array or be less than the (0 - array.length)'
-                );
-            }
-
-            if (!arr.length) {
-                console.warn('The list is empty. Nothing is deleted');
-                return null;
-            }
-
             // calculate real index
-            let realIndex = i;
-            if (i < 0) {
-                realIndex = arr.length + i;
-            }
+            const realIndex = getRealIndex(i, {
+                upper: arr.length,
+                errorInfo:
+                    'The first parameter i MUST not be more than the length of the array or be less than the (0 - array.length)',
+            });
 
             if (realIndex === arr.length - 1) {
                 setArr(oldArray => [...oldArray].slice(0, -1) as unknown as Readonly<List>);
@@ -208,17 +223,8 @@ export function useList<List extends unknown[] = unknown[]>(list: List | null = 
             setArr(oldArray => deepFreeze([v, ...oldArray] as unknown as Readonly<List>));
         },
         updateAsIndex(v: List[number], i = 0) {
-            if (i < -arr.length || i >= arr.length) {
-                throw new Error(
-                    'The first parameter i MUST not be more than or equal to the length of the array or be less than the (0 - array.length)'
-                );
-            }
-
             // calculate real index
-            let realIndex = i;
-            if (i < 0) {
-                realIndex = arr.length + i;
-            }
+            const realIndex = getRealIndex(i);
 
             if (realIndex === arr.length - 1) {
                 setArr(oldArray => deepFreeze([...oldArray.slice(0, -1), v] as unknown as Readonly<List>));
