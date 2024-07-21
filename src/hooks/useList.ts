@@ -128,17 +128,12 @@ export function useList<List extends unknown[] = unknown[]>(list: List | null = 
             );
         },
         insert(v: List[number], i = 0): void {
-            if (i < -arr.length || i > arr.length) {
-                throw new Error(
-                    'The first parameter i MUST not be more than the length of the array or be less than the (0 - array.length)'
-                );
-            }
-
             // calculate real index
-            let realIndex = i;
-            if (i < 0) {
-                realIndex = arr.length + i;
-            }
+            const realIndex = getRealIndex(i, {
+                upper: arr.length,
+                errorInfo:
+                    'The first parameter i MUST not be more than the length of the array or be less than the (0 - array.length)',
+            });
 
             if (realIndex === arr.length) {
                 setArr(oldArray => deepFreeze([...oldArray, v] as unknown as Readonly<List>));
