@@ -6,3 +6,4 @@ export { usePolling } from './UsePolling';
 export { useSet } from './UseSet';
 export { useSortedNumList } from './UseSortedNumList';
 export { use01, useBool, useToggle } from './UseToggle';
+export { useTimeoutFn } from './UseTimeoutFn';

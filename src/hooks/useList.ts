@@ -141,7 +141,7 @@ export function useList<List extends unknown[] = unknown[]>(list: List | null = 
             }
 
             if (realIndex === arr.length) {
-                append(v);
+                setArr(oldArray => deepFreeze([...oldArray, v] as unknown as Readonly<List>));
                 return;
             }
 

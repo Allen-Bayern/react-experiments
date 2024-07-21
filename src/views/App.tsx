@@ -1,10 +1,14 @@
-import { useSortedNumList } from '@/hooks';
+import { useSortedNumList, useTimeoutFn } from '@/hooks';
 import { getRandomInt } from '@/utils';
 
 const TO = 10000;
 
 function App() {
     const [randomArray, methodsOfRandomArray] = useSortedNumList();
+
+    useTimeoutFn(() => {
+        console.log('hello');
+    }, 8 * 1000);
 
     return (
         <div className="app-root">
