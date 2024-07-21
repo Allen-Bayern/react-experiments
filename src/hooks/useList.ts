@@ -33,18 +33,18 @@ export function useList<List extends unknown[] = unknown[]>(list: List | null = 
         return i;
     };
 
-    const append = (...v: List) => {
+    const append = (...v: List): void => {
         setArr(oldArray => deepFreeze([...oldArray, ...v] as List) as Readonly<List>);
     };
 
-    const extend = (l: List) => {
+    const extend = (l: List): void => {
         setArr(oldArray => deepFreeze([...oldArray, ...l] as List) as Readonly<List>);
     };
 
     const methods = {
         append,
         concat: extend,
-        count(v: List[number]) {
+        count(v: List[number]): number {
             if (!arr.includes(v)) {
                 return 0;
             }
@@ -57,13 +57,13 @@ export function useList<List extends unknown[] = unknown[]>(list: List | null = 
                 return counter;
             }, 0);
         },
-        clear() {
+        clear(): void {
             setArr([] as unknown as Readonly<List>);
         },
-        cover(l: List) {
+        cover(l: List): void {
             setArr(deepFreeze(l) as Readonly<List>);
         },
-        deleteAsIndex(i: number) {
+        deleteAsIndex(i: number): List[number] {
             // calculate real index
             const realIndex = getRealIndex(i, {
                 upper: arr.length,
@@ -75,7 +75,6 @@ export function useList<List extends unknown[] = unknown[]>(list: List | null = 
                 setArr(oldArray => [...oldArray].slice(0, -1) as unknown as Readonly<List>);
             } else if (!realIndex) {
                 setArr(oldArray => [...oldArray].slice(1) as unknown as Readonly<List>);
-                return;
             } else {
                 setArr(oldArray =>
                     deepFreeze([
@@ -91,7 +90,7 @@ export function useList<List extends unknown[] = unknown[]>(list: List | null = 
          * 删除列表中的某个元素，默认删除第一次出现的元素。
          * 如配置`all = true`, 则删除所有出现的元素
          */
-        deleteAsValue(v: List[number], all = false) {
+        deleteAsValue(v: List[number], all = false): void {
             if (arr.indexOf(v) === -1) {
                 console.warn('The value does not exists. Nothing is deleted');
                 return;
@@ -120,7 +119,7 @@ export function useList<List extends unknown[] = unknown[]>(list: List | null = 
         },
         extend,
         // eslint-disable-next-line no-unused-vars
-        filter(cb: (val: List[number], index: number, array: List) => unknown) {
+        filter(cb: (val: List[number], index: number, array: List) => unknown): void {
             setArr(
                 oldArray =>
                     [...oldArray].filter((val: List[number], index, array) =>
@@ -128,7 +127,7 @@ export function useList<List extends unknown[] = unknown[]>(list: List | null = 
                     ) as unknown as Readonly<List>
             );
         },
-        insert(v: List[number], i = 0) {
+        insert(v: List[number], i = 0): void {
             if (i < -arr.length || i > arr.length) {
                 throw new Error(
                     'The first parameter i MUST not be more than the length of the array or be less than the (0 - array.length)'
@@ -161,7 +160,7 @@ export function useList<List extends unknown[] = unknown[]>(list: List | null = 
             return;
         },
         push: append,
-        pop() {
+        pop(): List[number] | null {
             let poppedElement: List[number] | null = null;
 
             if (arr.length) {
@@ -173,13 +172,13 @@ export function useList<List extends unknown[] = unknown[]>(list: List | null = 
 
             return poppedElement;
         },
-        reset() {
+        reset(): void {
             setArr(deepFreeze([...initValue.current] as unknown as Readonly<List>));
         },
-        reverse() {
+        reverse(): void {
             setArr(oldArray => deepFreeze([...oldArray].reverse() as unknown as Readonly<List>));
         },
-        shift() {
+        shift(): List[number] | null {
             let shiftedElement: List[number] | null = null;
 
             if (arr.length) {
@@ -192,7 +191,7 @@ export function useList<List extends unknown[] = unknown[]>(list: List | null = 
             return shiftedElement;
         },
         /** 乱序数组 */
-        shuffle() {
+        shuffle(): void {
             const indexArray: number[] = [];
             while (indexArray.length < arr.length) {
                 const i = getRandomInt({ to: arr.length });
@@ -204,25 +203,25 @@ export function useList<List extends unknown[] = unknown[]>(list: List | null = 
             setArr(oldArray => deepFreeze(indexArray.map(i => oldArray[i])) as unknown as Readonly<List>);
         },
         // eslint-disable-next-line no-unused-vars
-        sort(sortCb?: (a: List[number], b: List[number]) => number) {
+        sort(sortCb?: (a: List[number], b: List[number]) => number): void {
             setArr(oldArray => deepFreeze([...oldArray].sort(sortCb) as unknown as Readonly<List>));
         },
         /** 返回一个深拷贝版本的当前数组 */
-        toCopied() {
+        toCopied(): List {
             return clone(arr);
         },
         // eslint-disable-next-line no-unused-vars
-        toSorted(sortCb?: (a: List[number], b: List[number]) => number) {
+        toSorted(sortCb?: (a: List[number], b: List[number]) => number): List {
             setArr(oldArray => deepFreeze([...oldArray].sort(sortCb) as unknown as Readonly<List>));
             return (clone(arr) as List).sort(sortCb);
         },
-        unique() {
+        unique(): void {
             setArr(oldArray => deepFreeze(Array.from(new Set(oldArray)) as unknown as Readonly<List>));
         },
-        unshift(v: List[number]) {
+        unshift(v: List[number]): void {
             setArr(oldArray => deepFreeze([v, ...oldArray] as unknown as Readonly<List>));
         },
-        updateAsIndex(v: List[number], i = 0) {
+        updateAsIndex(v: List[number], i = 0): void {
             // calculate real index
             const realIndex = getRealIndex(i);
 
