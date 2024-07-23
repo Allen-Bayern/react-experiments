@@ -2,7 +2,7 @@ import { useRef, useEffect, useState, useCallback } from 'react';
 
 /** 轮询 hook */
 export function usePolling(
-    f: () => void | Promise<void>,
+    fn: () => void | Promise<void>,
     opts: Partial<{
         /** 间隔 */
         inter: number;
@@ -14,6 +14,9 @@ export function usePolling(
 
     const [isStarted, setIsStarted] = useState(immediate);
     const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    // cache latest function
+    const fnRef = useRef(fn);
 
     const clearTimer = useCallback(() => {
         if (timer.current) {
@@ -30,13 +33,17 @@ export function usePolling(
         setIsStarted(false);
     }, []);
 
+    useEffect(() => {
+        fnRef.current = fn;
+    }, [fn]);
+
     useEffect(
         function pollingFunc() {
             clearTimer();
 
             if (isStarted) {
                 timer.current = setTimeout(async () => {
-                    await f();
+                    await fnRef.current();
                     pollingFunc();
                 }, inter);
             }

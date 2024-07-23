@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
-import type { BaseFunc } from './share';
 
-export function useTimeoutFn<F extends BaseFunc>(fn: F, ms = 1000) {
+export function useTimeoutFn(fn: () => {}, ms = 1000) {
+    const fnRef = useRef(fn);
     const readyStatus = useRef(false);
     const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -15,20 +15,25 @@ export function useTimeoutFn<F extends BaseFunc>(fn: F, ms = 1000) {
 
     function startTimer() {
         clearFunc();
-
         timer.current = setTimeout(() => {
             readyStatus.current = true;
-            fn();
+            fnRef.current();
         }, ms);
-
-        return clearFunc;
     }
 
     function getIsReady() {
         return readyStatus.current;
     }
 
-    useEffect(startTimer, [ms]);
+    useEffect(() => {
+        fnRef.current = fn;
+    }, [fn]);
+
+    // Main logics
+    useEffect(() => {
+        startTimer();
+        return clearFunc;
+    }, [ms]);
 
     return [getIsReady, clearFunc, startTimer] as const;
 }
