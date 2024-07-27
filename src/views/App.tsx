@@ -1,84 +1,70 @@
-import { useSortedNumList, useTimeoutFn } from '@/hooks';
+import React from 'react';
+import { useQueue } from '@/hooks';
 import { getRandomInt } from '@/utils';
+import './_App.scss';
 
-const TO = 10000;
+const { useEffect } = React;
 
 function App() {
-    const [randomArray, methodsOfRandomArray] = useSortedNumList();
+    const [curNode, methodsOfQueue] = useQueue<number>();
 
-    useTimeoutFn(() => {
-        console.log('hello');
-    }, 8 * 1000);
+    useEffect(() => {
+        console.log('current node: ', curNode);
+    }, [curNode]);
 
     return (
         <div className="app-root">
-            <button
-                type="button"
+            <p
+                className="app-root-btn"
                 onClick={() => {
-                    const cur = getRandomInt({
-                        to: TO,
+                    methodsOfQueue.enqueue(getRandomInt());
+                }}
+            >
+                Enqueue a random number
+            </p>
+            <p
+                className="app-root-btn"
+                onClick={() => {
+                    methodsOfQueue.dequeue();
+                }}
+            >
+                Dequeue
+            </p>
+            <p
+                className="app-root-btn"
+                onClick={() => {
+                    methodsOfQueue.clear();
+                }}
+            >
+                Clear the queue
+            </p>
+            <p
+                className="app-root-btn"
+                onClick={() => {
+                    methodsOfQueue.forEach((v, i) => {
+                        console.log('The value: ', v);
+                        console.log('Index: ', i);
                     });
-                    let numPushed = cur;
-                    if (randomArray.includes(cur)) {
-                        numPushed += 1;
-                    }
-
-                    methodsOfRandomArray.push(numPushed);
                 }}
             >
-                Add a random number to array
-            </button>
-
-            <button
-                type="button"
+                See the queue
+            </p>
+            <p
+                className="app-root-btn"
                 onClick={() => {
-                    methodsOfRandomArray.clear();
+                    console.log(methodsOfQueue.getSize());
                 }}
             >
-                Clear the array
-            </button>
-
-            <button
-                type="button"
+                Get Size
+            </p>
+            <p
+                className="app-root-btn"
                 onClick={() => {
-                    methodsOfRandomArray.filter(v => v > 2000);
+                    console.log(methodsOfQueue.toArray());
                 }}
             >
-                Filter the value more than 2000
-            </button>
-
-            <button
-                type="button"
-                onClick={() => {
-                    const deleted = methodsOfRandomArray.deleteAsIndex(2);
-                    console.log(deleted);
-                }}
-            >
-                Delete the third element of the array
-            </button>
-
-            <button
-                type="button"
-                onClick={() => {
-                    methodsOfRandomArray.reverse();
-                }}
-            >
-                Reverse
-            </button>
-
-            <div>
-                {randomArray.map(int => (
-                    <span
-                        key={int}
-                        style={{
-                            marginLeft: '8px',
-                            marginRight: '8px',
-                        }}
-                    >
-                        {int}
-                    </span>
-                ))}
-            </div>
+                to Array
+            </p>
         </div>
     );
 }
