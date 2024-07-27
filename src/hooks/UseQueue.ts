@@ -37,9 +37,8 @@ export const useQueue = <T = unknown>() => {
         let currentIndex = 0;
         let { current: curNode } = headNode;
         while (curNode) {
-            iterMethod(curNode.value, currentIndex, curNode);
+            iterMethod(curNode.value, currentIndex++, curNode);
             ({ nextNode: curNode } = curNode);
-            currentIndex += 1;
         }
     };
 
