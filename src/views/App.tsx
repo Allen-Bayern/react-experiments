@@ -1,16 +1,14 @@
-import React from 'react';
+import { useEffect } from 'react';
 import { useQueue } from '@/hooks';
 import { getRandomInt } from '@/utils';
 import './_App.scss';
 
-const { useEffect } = React;
-
 function App() {
-    const [curNode, methodsOfQueue] = useQueue<number>();
+    const [queue, methodsOfQueue] = useQueue<number>();
 
     useEffect(() => {
-        console.log('current node: ', curNode);
-    }, [curNode]);
+        console.log(queue);
+    }, [queue]);
 
     return (
         <div className="app-root">
@@ -41,9 +39,8 @@ function App() {
             <p
                 className="app-root-btn"
                 onClick={() => {
-                    methodsOfQueue.forEach((v, i) => {
-                        console.log('The value: ', v);
-                        console.log('Index: ', i);
+                    methodsOfQueue.forEach(val => {
+                        console.log(val);
                     });
                 }}
             >

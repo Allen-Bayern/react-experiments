@@ -1,4 +1,6 @@
-import { useState, useRef, useMemo } from 'react';
+import { useState, useRef, useMemo, useCallback } from 'react';
+import deepFreeze from 'deep-freeze-strict';
+import deepClone from 'clone';
 
 interface QueueNode<T> {
     nextNode: QueueNode<T> | null;
@@ -21,7 +23,7 @@ export const useQueue = <T = unknown>() => {
     // eslint-disable-next-line no-unused-vars
     type IterMethod<R = void> = (value: T, index: number, node: QueueNode<T>) => R;
 
-    const [currentNode, setCurrentNode] = useState<MaybeQueueNode<T>>(null);
+    const [currentNode, setCurrentNode] = useState<Readonly<MaybeQueueNode<T>>>(null);
 
     const headNode = useRef<MaybeQueueNode<T>>(null);
     const tailNode = useRef<MaybeQueueNode<T>>(null);
@@ -29,18 +31,21 @@ export const useQueue = <T = unknown>() => {
     const queueSize = useRef(0);
 
     // forEach method for the queue
-    const forEach = (iterMethod: IterMethod) => {
-        if (!currentNode && !queueSize.current) {
-            return;
-        }
+    const forEach = useCallback(
+        (iterMethod: IterMethod) => {
+            if (!currentNode && !queueSize.current) {
+                return;
+            }
 
-        let currentIndex = 0;
-        let { current: curNode } = headNode;
-        while (curNode) {
-            iterMethod(curNode.value, currentIndex++, curNode);
-            ({ nextNode: curNode } = curNode);
-        }
-    };
+            let currentIndex = 0;
+            let { current: curNode } = headNode;
+            while (curNode) {
+                iterMethod(curNode.value, currentIndex++, curNode);
+                ({ nextNode: curNode } = curNode);
+            }
+        },
+        [currentNode]
+    );
 
     const methods = useMemo(() => {
         return {
@@ -58,21 +63,20 @@ export const useQueue = <T = unknown>() => {
                 } else if (tailNode.current) {
                     tailNode.current.nextNode = node;
                 }
-
                 tailNode.current = node;
                 queueSize.current++;
-                setCurrentNode(tailNode.current);
+
+                // 获取的是深拷贝后的只读副本
+                setCurrentNode(deepFreeze(deepClone(headNode.current)) as Readonly<MaybeQueueNode<T>>);
             },
             dequeue() {
                 if (!headNode.current) {
                     return null;
                 }
-
                 const { nextNode } = headNode.current;
                 headNode.current = nextNode;
                 queueSize.current--;
-
-                setCurrentNode(nextNode);
+                setCurrentNode(deepFreeze(deepClone(nextNode)) as Readonly<MaybeQueueNode<T>>);
                 return nextNode?.value ?? null;
             },
             forEach,
