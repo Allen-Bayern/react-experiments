@@ -2,7 +2,7 @@ import { UNDEFINED } from './constants';
 
 export class LinkedNode<T = unknown> {
     public next: LinkedNode<T> | null = null;
-    private __value: T | null = null;
+    private __value: T;
 
     constructor(v: T) {
         this.__value = v;
