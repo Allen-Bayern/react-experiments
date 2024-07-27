@@ -60,7 +60,7 @@ export const useQueue = <T = unknown>() => {
                 }
 
                 tailNode.current = node;
-                queueSize.current += 1;
+                queueSize.current++;
                 setCurrentNode(tailNode.current);
             },
             dequeue() {
@@ -70,7 +70,7 @@ export const useQueue = <T = unknown>() => {
 
                 const { nextNode } = headNode.current;
                 headNode.current = nextNode;
-                queueSize.current -= 1;
+                queueSize.current--;
 
                 setCurrentNode(nextNode);
                 return nextNode?.value ?? null;
