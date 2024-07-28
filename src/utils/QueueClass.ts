@@ -1,14 +1,10 @@
 // eslint-disable-next-line no-unused-vars
 type IterMethod<T, Return = void> = (item: T, index: number, q: Queue<T>) => Return;
 
-export class LinkedNode<T = unknown> {
-    public next: LinkedNode<T> | null = null;
-    public value: T;
-
-    constructor(v: T) {
-        this.value = v;
-    }
-}
+const createNode = <T>(value: T): LinkedNode<T> => ({
+    value,
+    nextNode: null,
+});
 
 export class Queue<T = unknown> {
     private __head: LinkedNode<T> | null = null;
@@ -37,19 +33,19 @@ export class Queue<T = unknown> {
             return null;
         }
 
-        this.__head = this.__head?.next ?? null;
+        this.__head = this.__head?.nextNode ?? null;
         this.__size--;
 
         return poppedNode.value;
     }
 
     enqueue(v: T) {
-        const currentNode = new LinkedNode(v);
+        const currentNode = createNode(v);
 
         if (!this.__head) {
             this.__head = currentNode;
         } else if (this.__tail) {
-            this.__tail.next = currentNode;
+            this.__tail.nextNode = currentNode;
         }
 
         this.__tail = currentNode;
@@ -63,7 +59,7 @@ export class Queue<T = unknown> {
 
         while (currentNode) {
             cb(currentNode.value, realIndex++, this);
-            ({ next: currentNode } = currentNode);
+            ({ nextNode: currentNode } = currentNode);
         }
     }
 
@@ -94,7 +90,7 @@ export class Queue<T = unknown> {
 
         while (currentNode) {
             yield currentNode.value;
-            ({ next: currentNode } = currentNode);
+            ({ nextNode: currentNode } = currentNode);
         }
     }
 }

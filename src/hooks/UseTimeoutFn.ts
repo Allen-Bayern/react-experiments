@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 
-export function useTimeoutFn(fn: () => {}, ms = 1000) {
+export function useTimeoutFn(fn: () => void, ms = 1000) {
     const fnRef = useRef(fn);
     const readyStatus = useRef(false);
     const timer = useRef<ReturnType<typeof setTimeout> | null>(null);

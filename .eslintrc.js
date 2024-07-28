@@ -13,6 +13,7 @@ module.exports = {
         'prettier',
         'plugin:prettier/recommended',
         'plugin:react/jsx-runtime',
+        'plugin:@typescript-eslint/recommended',
     ],
     parser: '@typescript-eslint/parser',
     parserOptions: {
@@ -31,5 +32,6 @@ module.exports = {
         'prettier/prettier': [2, {}, { usePrettierrc: true }],
         'react/no-deprecated': 0,
         'react/prop-types': 0,
+        '@typescript-eslint/explicit-module-boundary-types': 0,
     },
 };
