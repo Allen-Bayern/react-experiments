@@ -1,4 +1,11 @@
 .app-root {
     display: flex;
     flex-flow: column;
+
+    &-btn {
+        padding: 1em;
+        border: 1px solid red;
+        border-radius: 0.5em;
+        margin: 1em;
+    }
 }

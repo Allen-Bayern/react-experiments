@@ -67,9 +67,18 @@ export const useQueue = <T = unknown>() => {
                 if (!headNode.current) {
                     return null;
                 }
+
                 const { nextNode } = headNode.current;
                 headNode.current = nextNode;
-                setSizeOfQueue(oldSize => oldSize - 1);
+
+                setSizeOfQueue(oldSize => {
+                    // 注意处理0的情况
+                    if (oldSize === 0) {
+                        return 0;
+                    }
+
+                    return oldSize - 1;
+                });
                 return nextNode?.value ?? null;
             },
             forEach,
