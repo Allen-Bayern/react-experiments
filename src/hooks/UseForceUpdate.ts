@@ -1,4 +1,9 @@
-import { useBool } from './UseToggle';
+import { useState, useCallback } from 'react';
 
-/** 强制渲染组件 */
-export const useForceUpdate = () => useBool()[1];
+export const useForceUpdate = () => {
+    const stateTrigger = useState(false)[1];
+
+    return useCallback(() => {
+        stateTrigger(o => !o);
+    }, []);
+};
