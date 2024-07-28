@@ -23,6 +23,14 @@ function App() {
             <p
                 className="app-root-btn"
                 onClick={() => {
+                    methodsOfQueue.enqueueWithoutRender(getRandomInt());
+                }}
+            >
+                Enqueue a random number without re-render
+            </p>
+            <p
+                className="app-root-btn"
+                onClick={() => {
                     methodsOfQueue.dequeue();
                 }}
             >

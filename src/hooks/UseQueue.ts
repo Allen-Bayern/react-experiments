@@ -25,30 +25,47 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
     type IterMethod<R = void> = (value: T, index: number, node: QueueNode<T>) => R;
 
     const [sizeOfQueue, setSizeOfQueue] = useState(() => initValueAsArray.length);
+    const queueSize = useRef(0);
 
     const headNode = useRef<MaybeQueueNode<T>>(null);
     const tailNode = useRef<MaybeQueueNode<T>>(null);
 
-    // clear the queue without rerender
-    const clearMethod = useCallback(() => {
+    const clearWithoutRender = useCallback(() => {
         headNode.current = null;
         tailNode.current = null;
+        queueSize.current = 0;
     }, []);
 
-    // enqueue without rerender
-    const enqueueMethod = useCallback((val: T) => {
-        const node = createQueueNode(val);
+    const dequeueWithoutRender = useCallback(() => {
+        if (!headNode.current) {
+            return null;
+        }
+
+        const { nextNode } = headNode.current;
+        headNode.current = nextNode;
+
+        if (queueSize.current > 0) {
+            queueSize.current--;
+        } else {
+            queueSize.current = 0;
+        }
+
+        return nextNode?.value ?? null;
+    }, []);
+
+    const enqueueWithoutRender = useCallback((v: T) => {
+        const node = createQueueNode(v);
 
         if (!headNode.current) {
             headNode.current = node;
         } else if (tailNode.current) {
             tailNode.current.nextNode = node;
         }
-
         tailNode.current = node;
+
+        queueSize.current++;
     }, []);
 
-    // forEach method for the queue
     const forEach = useCallback((iterMethod: IterMethod) => {
         if (!headNode.current) {
             return;
@@ -63,7 +80,6 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
         }
     }, []);
 
-    // map method for the queue
     const map = useCallback(<Return = unknown>(mapMethod: IterMethod<Return>): Return[] => {
         const res: Return[] = [];
 
@@ -78,30 +94,20 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
     const methods = useMemo(
         () => ({
             clear() {
-                clearMethod();
+                clearWithoutRender();
                 setSizeOfQueue(() => 0);
             },
             enqueue(value: T) {
-                enqueueMethod(value);
-                setSizeOfQueue(oldSize => oldSize + 1);
+                enqueueWithoutRender(value);
+                setSizeOfQueue(queueSize.current);
             },
+            enqueueWithoutRender,
             dequeue() {
-                if (!headNode.current) {
-                    return null;
-                }
-
-                const { nextNode } = headNode.current;
-                headNode.current = nextNode;
-
-                setSizeOfQueue(oldSize => {
-                    if (oldSize <= 0) {
-                        return 0;
-                    }
-
-                    return oldSize - 1;
-                });
-                return nextNode?.value ?? null;
+                const dequeued = dequeueWithoutRender();
+                setSizeOfQueue(queueSize.current);
+                return dequeued;
             },
+            dequeueWithoutRender,
             forEach,
             /**
              * Get a read-only deep copy of the queue object.
@@ -126,11 +132,11 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
 
     // --- initial logics ---
     useEffect(() => {
-        clearMethod();
+        clearWithoutRender();
 
         if (initValueAsArray.length) {
             initValueAsArray.forEach(item => {
-                enqueueMethod(item);
+                enqueueWithoutRender(item);
             });
         }
     }, []);
