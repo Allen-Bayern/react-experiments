@@ -49,6 +49,15 @@ function App() {
             <p
                 className="app-root-btn"
                 onClick={() => {
+                    console.log(methodsOfQueue.map(val => 2 * val));
+                }}
+            >
+                Map new array
+            </p>
+
+            <p
+                className="app-root-btn"
+                onClick={() => {
                     console.log(methodsOfQueue.toArray());
                 }}
             >

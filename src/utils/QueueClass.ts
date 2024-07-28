@@ -1,15 +1,12 @@
-import { UNDEFINED } from './constants';
+// eslint-disable-next-line no-unused-vars
+type IterMethod<T, Return = void> = (item: T, index: number, q: Queue<T>) => Return;
 
 export class LinkedNode<T = unknown> {
     public next: LinkedNode<T> | null = null;
-    private __value: T;
+    public value: T;
 
     constructor(v: T) {
-        this.__value = v;
-    }
-
-    get value() {
-        return this.__value;
+        this.value = v;
     }
 }
 
@@ -20,19 +17,30 @@ export class Queue<T = unknown> {
 
     constructor(arr: T[] = []) {
         this.clear();
-        if (!arr.length) {
-            return;
-        }
 
-        arr.forEach(item => {
-            this.enqueue(item);
-        });
+        if (arr.length) {
+            arr.forEach(item => {
+                this.enqueue(item);
+            });
+        }
     }
 
     clear() {
         this.__head = null;
         this.__tail = null;
         this.__size = 0;
+    }
+
+    dequeue() {
+        const poppedNode = this.__head;
+        if (!poppedNode) {
+            return null;
+        }
+
+        this.__head = this.__head?.next ?? null;
+        this.__size--;
+
+        return poppedNode.value;
     }
 
     enqueue(v: T) {
@@ -48,41 +56,33 @@ export class Queue<T = unknown> {
         this.__size++;
     }
 
-    dequeue() {
-        const poppedNode = this.__head;
-        if (!poppedNode) {
-            return null;
+    // eslint-disable-next-line no-unused-vars
+    forEach(cb: IterMethod<T>) {
+        let realIndex = 0;
+        let { __head: currentNode } = this;
+
+        while (currentNode) {
+            cb(currentNode.value, realIndex++, this);
+            ({ next: currentNode } = currentNode);
         }
-
-        this.__head = this.__head?.next ?? null;
-        this.__size--;
-
-        return poppedNode.value;
-    }
-
-    peek() {
-        if (!this.__head) {
-            return null;
-        }
-
-        return this.__head.value;
     }
 
     get size() {
         return this.__size;
     }
 
-    // eslint-disable-next-line no-unused-vars
-    forEach(cb: (item: T, index: number, q: Queue<T>) => void) {
-        const self = this;
-        let realIndex = 0;
-        let currentNode = this.__head;
+    map<R = unknown>(cb: IterMethod<T, R>) {
+        const res: R[] = [];
 
-        while (currentNode && currentNode.value !== null && currentNode.value !== UNDEFINED) {
-            const { value: currentValue } = currentNode;
-            cb(currentValue, realIndex++, self);
-            ({ next: currentNode } = currentNode);
-        }
+        this.forEach((item, index, self) => {
+            res.push(cb(item, index, self));
+        });
+
+        return res;
+    }
+
+    peek() {
+        return this.__head?.value ?? null;
     }
 
     *[Symbol.iterator]() {
