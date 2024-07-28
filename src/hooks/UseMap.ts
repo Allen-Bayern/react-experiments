@@ -31,6 +31,9 @@ export function useMap<Key = unknown, Value = unknown>(initValue: Iterable<reado
                 });
             },
             cover,
+            clear() {
+                setMap(new Map<Key, Value>());
+            },
             remove(k: Key) {
                 if (!map.has(k)) {
                     console.warn(`The key ${k} is not found in the map.`);
