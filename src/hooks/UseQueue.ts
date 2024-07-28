@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import deepFreeze from 'deep-freeze-strict';
 import deepClone from 'clone';
 
@@ -63,7 +63,18 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
         }
     }, []);
 
-    // methods没有重新创建的任何必要
+    // map method for the queue
+    const map = useCallback(<Return = unknown>(mapMethod: IterMethod<Return>): Return[] => {
+        const res: Return[] = [];
+
+        forEach((value, index, curNode) => {
+            res.push(mapMethod(value, index, curNode));
+        });
+
+        return res;
+    }, []);
+
+    // The `methods` should not be re-created.
     const methods = useMemo(
         () => ({
             clear() {
@@ -83,8 +94,7 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
                 headNode.current = nextNode;
 
                 setSizeOfQueue(oldSize => {
-                    // 注意处理0的情况
-                    if (!oldSize) {
+                    if (oldSize <= 0) {
                         return 0;
                     }
 
@@ -93,7 +103,13 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
                 return nextNode?.value ?? null;
             },
             forEach,
-            /** Get a read-only deep copy of the queue object */
+            /**
+             * Get a read-only deep copy of the queue object.
+             *
+             * Use this method carefully
+             * because with the expand of the queue,
+             * the action of copy will cost.
+             */
             getCopyOfQueue() {
                 if (!headNode.current) {
                     return null;
@@ -102,26 +118,13 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
                 const deepCopied = deepClone(headNode.current);
                 return deepFreeze(deepCopied) as Readonly<typeof deepCopied>;
             },
-            map<Return = unknown>(mapMethod: IterMethod<Return>): Return[] {
-                const res: Return[] = [];
-                forEach((value, index, curNode) => {
-                    res.push(mapMethod(value, index, curNode));
-                });
-
-                return res;
-            },
-            toArray(): T[] {
-                const res: T[] = [];
-                forEach(value => {
-                    res.push(value);
-                });
-
-                return res;
-            },
+            map,
+            toArray: () => map(item => item),
         }),
         []
     );
 
+    // --- initial logics ---
     useEffect(() => {
         clearMethod();
 
