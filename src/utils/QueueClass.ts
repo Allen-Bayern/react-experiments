@@ -40,12 +40,12 @@ export class Queue<T = unknown> {
 
         if (!this.__head) {
             this.__head = currentNode;
-        } else {
-            this.__tail!.next = currentNode;
+        } else if (this.__tail) {
+            this.__tail.next = currentNode;
         }
 
         this.__tail = currentNode;
-        this.__size += 1;
+        this.__size++;
     }
 
     dequeue() {
@@ -55,7 +55,7 @@ export class Queue<T = unknown> {
         }
 
         this.__head = this.__head?.next ?? null;
-        this.__size -= 1;
+        this.__size--;
 
         return poppedNode.value;
     }
@@ -80,9 +80,8 @@ export class Queue<T = unknown> {
 
         while (currentNode && currentNode.value !== null && currentNode.value !== UNDEFINED) {
             const { value: currentValue } = currentNode;
-            cb(currentValue, realIndex, self);
-            realIndex += 1;
-            currentNode = currentNode.next;
+            cb(currentValue, realIndex++, self);
+            ({ next: currentNode } = currentNode);
         }
     }
 
@@ -91,7 +90,7 @@ export class Queue<T = unknown> {
 
         while (currentNode) {
             yield currentNode.value;
-            currentNode = currentNode.next;
+            ({ next: currentNode } = currentNode);
         }
     }
 }
