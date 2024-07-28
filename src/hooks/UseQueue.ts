@@ -124,6 +124,11 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
                 const deepCopied = deepClone(headNode.current);
                 return deepFreeze(deepCopied) as Readonly<typeof deepCopied>;
             },
+            getSize() {
+                // 纠正因为调用withoutRender系列方法时导致的state与ref不同步
+                setSizeOfQueue(queueSize.current);
+                return queueSize.current;
+            },
             map,
             toArray: () => map(item => item),
         }),

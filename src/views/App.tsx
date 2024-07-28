@@ -48,6 +48,15 @@ function App() {
             <p
                 className="app-root-btn"
                 onClick={() => {
+                    console.log(methodsOfQueue.getSize());
+                }}
+            >
+                Get size of the queue
+            </p>
+
+            <p
+                className="app-root-btn"
+                onClick={() => {
                     console.log(methodsOfQueue.getCopyOfQueue());
                 }}
             >
