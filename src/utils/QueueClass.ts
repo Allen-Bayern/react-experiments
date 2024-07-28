@@ -85,6 +85,10 @@ export class Queue<T = unknown> {
         return this.__head?.value ?? null;
     }
 
+    toArray() {
+        return this.map(item => item);
+    }
+
     *[Symbol.iterator]() {
         let currentNode = this.__head;
 
