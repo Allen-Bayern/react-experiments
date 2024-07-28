@@ -17,6 +17,19 @@ export function useMap<Key = unknown, Value = unknown>(initValue: Iterable<reado
                     return new Map([...prev, ...kvs]);
                 });
             },
+            // 批量删除
+            batchRemove(deletedKeyList: Iterable<Key>) {
+                setMap(prev => {
+                    const newMap = new Map(prev);
+
+                    for (const k of deletedKeyList) {
+                        if (newMap.has(k)) {
+                            newMap.delete(k);
+                        }
+                    }
+                    return newMap;
+                });
+            },
             cover,
             remove(k: Key) {
                 if (!map.has(k)) {
