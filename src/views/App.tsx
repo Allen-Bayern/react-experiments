@@ -4,11 +4,11 @@ import { getRandomInt } from '@/utils';
 import './_App.scss';
 
 function App() {
-    const [queue, methodsOfQueue] = useQueue<number>();
+    const [sizeOfQueue, methodsOfQueue] = useQueue<number>();
 
     useEffect(() => {
-        console.log(queue);
-    }, [queue]);
+        console.log(sizeOfQueue);
+    }, [sizeOfQueue]);
 
     return (
         <div className="app-root">
@@ -36,24 +36,16 @@ function App() {
             >
                 Clear the queue
             </p>
+
             <p
                 className="app-root-btn"
                 onClick={() => {
-                    methodsOfQueue.forEach(val => {
-                        console.log(val);
-                    });
+                    console.log(methodsOfQueue.getCopyOfQueue());
                 }}
             >
                 See the queue
             </p>
-            <p
-                className="app-root-btn"
-                onClick={() => {
-                    console.log(methodsOfQueue.getSize());
-                }}
-            >
-                Get Size
-            </p>
+
             <p
                 className="app-root-btn"
                 onClick={() => {
