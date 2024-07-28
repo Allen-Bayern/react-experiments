@@ -1,16 +1,12 @@
 import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import deepFreeze from 'deep-freeze-strict';
 import deepClone from 'clone';
+import type { LinkedNode } from './share';
 
-interface QueueNode<T> {
-    nextNode: QueueNode<T> | null;
-    get value(): T;
-}
-
-type MaybeQueueNode<T> = QueueNode<T> | null;
+type MaybeQueueNode<T> = LinkedNode<T> | null;
 
 /** to create a queue node */
-const createQueueNode = <T>(v: T): QueueNode<T> => {
+const createQueueNode = <T>(v: T): LinkedNode<T> => {
     return {
         nextNode: null,
         get value() {
@@ -22,7 +18,7 @@ const createQueueNode = <T>(v: T): QueueNode<T> => {
 /** A hook using queue structure like `yocto-queue` */
 export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
     // eslint-disable-next-line no-unused-vars
-    type IterMethod<R = void> = (value: T, index: number, node: QueueNode<T>) => R;
+    type IterMethod<R = void> = (value: T, index: number, node: LinkedNode<T>) => R;
 
     const [sizeOfQueue, setSizeOfQueue] = useState(() => initValueAsArray.length);
     const queueSize = useRef(0);
@@ -125,7 +121,6 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
                 return deepFreeze(deepCopied) as Readonly<typeof deepCopied>;
             },
             getSize() {
-                // 纠正因为调用withoutRender系列方法时导致的state与ref不同步
                 setSizeOfQueue(queueSize.current);
                 return queueSize.current;
             },
@@ -135,7 +130,7 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
         []
     );
 
-    // --- initial logics ---
+    // --- Initialise ---
     useEffect(() => {
         clearWithoutRender();
 

@@ -9,3 +9,8 @@ export type BaseFunc = (...args: any[]) => any;
 
 // array element type
 export type ArrayElement<T> = T extends (infer U)[] ? U : never;
+
+export interface LinkedNode<T> {
+    value: T;
+    nextNode: LinkedNode<T> | null;
+}
