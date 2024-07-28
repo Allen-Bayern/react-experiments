@@ -1,17 +1,14 @@
 import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import deepFreeze from 'deep-freeze-strict';
 import deepClone from 'clone';
-import type { LinkedNode } from './share';
 
 type MaybeQueueNode<T> = LinkedNode<T> | null;
 
 /** to create a queue node */
-const createQueueNode = <T>(v: T): LinkedNode<T> => {
+const createQueueNode = <T>(value: T): LinkedNode<T> => {
     return {
         nextNode: null,
-        get value() {
-            return v;
-        },
+        value,
     };
 };
 

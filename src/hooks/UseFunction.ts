@@ -1,5 +1,4 @@
 import { useRef, useCallback } from 'react';
-import type { noop, PickFunction } from './share';
 
 /**
  * @description a hook to use memoised function
