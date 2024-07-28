@@ -4,7 +4,7 @@ import { getRandomInt } from '@/utils';
 import './_App.scss';
 
 function App() {
-    const [sizeOfQueue, methodsOfQueue] = useQueue<number>();
+    const [sizeOfQueue, methodsOfQueue] = useQueue<number>([1, 2, 3]);
 
     useEffect(() => {
         console.log(sizeOfQueue);

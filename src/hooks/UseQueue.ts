@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo, useCallback } from 'react';
+import { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import deepFreeze from 'deep-freeze-strict';
 import deepClone from 'clone';
 
@@ -19,48 +19,59 @@ const createQueueNode = <T>(v: T): QueueNode<T> => {
     };
 };
 
-export const useQueue = <T = unknown>() => {
+/** A hook using queue structure like `yocto-queue` */
+export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
     // eslint-disable-next-line no-unused-vars
     type IterMethod<R = void> = (value: T, index: number, node: QueueNode<T>) => R;
 
-    const [sizeOfQueue, setSizeOfQueue] = useState(0);
+    const [sizeOfQueue, setSizeOfQueue] = useState(() => initValueAsArray.length);
 
     const headNode = useRef<MaybeQueueNode<T>>(null);
     const tailNode = useRef<MaybeQueueNode<T>>(null);
 
+    // clear the queue without rerender
+    const clearMethod = useCallback(() => {
+        headNode.current = null;
+        tailNode.current = null;
+    }, []);
+
+    // enqueue without rerender
+    const enqueueMethod = useCallback((val: T) => {
+        const node = createQueueNode(val);
+
+        if (!headNode.current) {
+            headNode.current = node;
+        } else if (tailNode.current) {
+            tailNode.current.nextNode = node;
+        }
+
+        tailNode.current = node;
+    }, []);
+
     // forEach method for the queue
-    const forEach = useCallback(
-        (iterMethod: IterMethod) => {
-            if (!headNode.current && !sizeOfQueue) {
-                return;
-            }
+    const forEach = useCallback((iterMethod: IterMethod) => {
+        if (!headNode.current) {
+            return;
+        }
 
-            let currentIndex = 0;
-            let { current: curNode } = headNode;
-            while (curNode) {
-                iterMethod(curNode.value, currentIndex++, curNode);
-                ({ nextNode: curNode } = curNode);
-            }
-        },
-        [sizeOfQueue]
-    );
+        let currentIndex = 0;
+        let curNode: MaybeQueueNode<T> = headNode.current;
 
-    const methods = useMemo(() => {
-        return {
+        while (curNode) {
+            iterMethod(curNode.value, currentIndex++, curNode);
+            ({ nextNode: curNode } = curNode);
+        }
+    }, []);
+
+    // methods没有重新创建的任何必要
+    const methods = useMemo(
+        () => ({
             clear() {
-                headNode.current = null;
-                tailNode.current = null;
-                setSizeOfQueue(0);
+                clearMethod();
+                setSizeOfQueue(() => 0);
             },
             enqueue(value: T) {
-                const node = createQueueNode(value);
-
-                if (!headNode.current) {
-                    headNode.current = node;
-                } else if (tailNode.current) {
-                    tailNode.current.nextNode = node;
-                }
-                tailNode.current = node;
+                enqueueMethod(value);
                 setSizeOfQueue(oldSize => oldSize + 1);
             },
             dequeue() {
@@ -73,7 +84,7 @@ export const useQueue = <T = unknown>() => {
 
                 setSizeOfQueue(oldSize => {
                     // 注意处理0的情况
-                    if (oldSize === 0) {
+                    if (!oldSize) {
                         return 0;
                     }
 
@@ -107,8 +118,19 @@ export const useQueue = <T = unknown>() => {
 
                 return res;
             },
-        };
-    }, [sizeOfQueue]);
+        }),
+        []
+    );
+
+    useEffect(() => {
+        clearMethod();
+
+        if (initValueAsArray.length) {
+            initValueAsArray.forEach(item => {
+                enqueueMethod(item);
+            });
+        }
+    }, []);
 
     return [sizeOfQueue, methods] as const;
 };
