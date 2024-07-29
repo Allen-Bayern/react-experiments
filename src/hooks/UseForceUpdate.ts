@@ -1,9 +1,12 @@
 import { useState, useCallback } from 'react';
+import { getRandomInt } from '@/utils';
 
 export const useForceUpdate = () => {
-    const stateTrigger = useState(false)[1];
-
+    const [, setRandomInt] = useState(getRandomInt());
     return useCallback(() => {
-        stateTrigger(o => !o);
+        setRandomInt(oldValue => {
+            const tmp = getRandomInt();
+            return tmp === oldValue ? oldValue + 1 : tmp;
+        });
     }, []);
 };
