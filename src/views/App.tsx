@@ -4,18 +4,19 @@ import { getRandomInt } from '@/utils';
 import './_App.scss';
 
 function App() {
-    const [sizeOfQueue, methodsOfQueue] = useQueue<number>([1, 2, 3]);
+    const queue = useQueue<number>([1, 2, 3]);
 
     useEffect(() => {
-        console.log(sizeOfQueue);
-    }, [sizeOfQueue]);
+        console.log('The Queue Updated');
+        console.log(queue.toArray());
+    }, [queue]);
 
     return (
         <div className="app-root">
             <p
                 className="app-root-btn"
                 onClick={() => {
-                    methodsOfQueue.enqueue(getRandomInt());
+                    queue.enqueue(getRandomInt());
                 }}
             >
                 Enqueue a random number
@@ -23,7 +24,7 @@ function App() {
             <p
                 className="app-root-btn"
                 onClick={() => {
-                    methodsOfQueue.enqueueWithoutRender(getRandomInt());
+                    queue.enqueueWithoutRender(getRandomInt());
                 }}
             >
                 Enqueue a random number without re-render
@@ -31,7 +32,7 @@ function App() {
             <p
                 className="app-root-btn"
                 onClick={() => {
-                    methodsOfQueue.dequeue();
+                    queue.dequeue();
                 }}
             >
                 Dequeue
@@ -39,7 +40,7 @@ function App() {
             <p
                 className="app-root-btn"
                 onClick={() => {
-                    methodsOfQueue.clear();
+                    queue.clear();
                 }}
             >
                 Clear the queue
@@ -48,7 +49,7 @@ function App() {
             <p
                 className="app-root-btn"
                 onClick={() => {
-                    console.log(methodsOfQueue.getSize());
+                    console.log(queue.size);
                 }}
             >
                 Get size of the queue
@@ -57,7 +58,7 @@ function App() {
             <p
                 className="app-root-btn"
                 onClick={() => {
-                    console.log(methodsOfQueue.getCopyOfQueue());
+                    console.log(queue.getReadonlyCopyOfQueue());
                 }}
             >
                 See the queue
@@ -66,7 +67,7 @@ function App() {
             <p
                 className="app-root-btn"
                 onClick={() => {
-                    console.log(methodsOfQueue.map(val => 2 * val));
+                    console.log(queue.map(val => 2 * val));
                 }}
             >
                 Map new array
@@ -75,7 +76,7 @@ function App() {
             <p
                 className="app-root-btn"
                 onClick={() => {
-                    console.log(methodsOfQueue.toArray());
+                    console.log(queue.toArray());
                 }}
             >
                 to Array

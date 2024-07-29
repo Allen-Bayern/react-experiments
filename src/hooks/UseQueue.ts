@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
+import { useForceUpdate } from './UseForceUpdate';
 import deepFreeze from 'deep-freeze-strict';
 import deepClone from 'clone';
 
@@ -16,6 +17,8 @@ const createQueueNode = <T>(value: T): LinkedNode<T> => {
 export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
     // eslint-disable-next-line no-unused-vars
     type IterMethod<R = void> = (value: T, index: number, node: LinkedNode<T>) => R;
+
+    const $forceUpdate = useForceUpdate();
 
     const [sizeOfQueue, setSizeOfQueue] = useState(() => initValueAsArray.length);
     const queueSize = useRef(0);
@@ -83,8 +86,18 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
         return res;
     }, []);
 
-    // The `methods` should not be re-created.
-    const methods = useMemo(
+    // --- Initialise ---
+    useEffect(() => {
+        clearWithoutRender();
+
+        if (initValueAsArray.length) {
+            initValueAsArray.forEach(item => {
+                enqueueWithoutRender(item);
+            });
+        }
+    }, []);
+
+    const queueWithMethods = useMemo(
         () => ({
             clear() {
                 clearWithoutRender();
@@ -103,13 +116,14 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
             dequeueWithoutRender,
             forEach,
             /**
-             * Get a read-only deep copy of the queue object.
+             * This method is used to obtain a read-only deep copy of the current queue.
              *
-             * Use this method carefully
-             * because with the expand of the queue,
-             * the action of copy will cost.
+             * __Note__:
+             * Use this method with caution,
+             * since deep copying can lead to performance issues
+             * as the queue elements increase.
              */
-            getCopyOfQueue() {
+            getReadonlyCopyOfQueue() {
                 if (!headNode.current) {
                     return null;
                 }
@@ -117,26 +131,30 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
                 const deepCopied = deepClone(headNode.current);
                 return deepFreeze(deepCopied) as Readonly<typeof deepCopied>;
             },
-            getSize() {
-                setSizeOfQueue(queueSize.current);
-                return queueSize.current;
-            },
             map,
             toArray: () => map(item => item),
+            /**
+             * Updates the view.
+             * If you modify elements in the queue using `enqueueWithoutRender` or `dequeueWithoutRender`,
+             * and you need to update the view,
+             * you can manually invoke this method to trigger re-rendering.
+             */
+            updateView() {
+                if (sizeOfQueue !== queueSize.current) {
+                    setSizeOfQueue(queueSize.current);
+                    return;
+                }
+
+                $forceUpdate();
+            },
+            /** Get current size of the queue. */
+            get size() {
+                return queueSize.current;
+            },
         }),
-        []
+
+        [sizeOfQueue]
     );
 
-    // --- Initialise ---
-    useEffect(() => {
-        clearWithoutRender();
-
-        if (initValueAsArray.length) {
-            initValueAsArray.forEach(item => {
-                enqueueWithoutRender(item);
-            });
-        }
-    }, []);
-
-    return [sizeOfQueue, methods] as const;
+    return queueWithMethods;
 };
