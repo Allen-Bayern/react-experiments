@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
-import { useForceUpdate } from './UseForceUpdate';
+import { getRandomInt } from '@/utils';
 import deepFreeze from 'deep-freeze-strict';
 import deepClone from 'clone';
 
@@ -18,13 +18,18 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
     // eslint-disable-next-line no-unused-vars
     type IterMethod<R = void> = (value: T, index: number, node: LinkedNode<T>) => R;
 
-    const $forceUpdate = useForceUpdate();
+    const [randomInt, setRandomInt] = useState(getRandomInt());
 
-    const [sizeOfQueue, setSizeOfQueue] = useState(() => initValueAsArray.length);
-    const queueSize = useRef(0);
+    const randomIntChange = useRef(() => {
+        setRandomInt(oldValue => {
+            const tmp = getRandomInt();
+            return tmp === oldValue ? oldValue + 1 : tmp;
+        });
+    });
 
     const headNode = useRef<MaybeQueueNode<T>>(null);
     const tailNode = useRef<MaybeQueueNode<T>>(null);
+    const queueSize = useRef(0);
 
     const clearWithoutRender = useCallback(() => {
         headNode.current = null;
@@ -97,20 +102,20 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
         }
     }, []);
 
-    const queueWithMethods = useMemo(
+    const queue = useMemo(
         () => ({
             clear() {
                 clearWithoutRender();
-                setSizeOfQueue(() => 0);
+                randomIntChange.current();
             },
             enqueue(value: T) {
                 enqueueWithoutRender(value);
-                setSizeOfQueue(queueSize.current);
+                randomIntChange.current();
             },
             enqueueWithoutRender,
             dequeue() {
                 const dequeued = dequeueWithoutRender();
-                setSizeOfQueue(queueSize.current);
+                randomIntChange.current();
                 return dequeued;
             },
             dequeueWithoutRender,
@@ -139,22 +144,21 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
              * and you need to update the view,
              * you can manually invoke this method to trigger re-rendering.
              */
-            updateView() {
-                if (sizeOfQueue !== queueSize.current) {
-                    setSizeOfQueue(queueSize.current);
-                    return;
-                }
-
-                $forceUpdate();
-            },
-            /** Get current size of the queue. */
+            updateView: randomIntChange.current,
             get size() {
                 return queueSize.current;
             },
-        }),
+            *[Symbol.iterator]() {
+                let { current: curNode } = headNode;
 
-        [sizeOfQueue]
+                while (curNode) {
+                    yield curNode.value;
+                    ({ nextNode: curNode } = curNode);
+                }
+            },
+        }),
+        [randomInt]
     );
 
-    return queueWithMethods;
+    return queue;
 };

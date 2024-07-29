@@ -1,10 +1,18 @@
-import { useEffect } from 'react';
-import { useQueue } from '@/hooks';
+import { useEffect, useCallback } from 'react';
+import { useQueue, useForceUpdate } from '@/hooks';
 import { getRandomInt } from '@/utils';
 import './_App.scss';
 
 function App() {
+    const $forceUpdate = useForceUpdate();
     const queue = useQueue<number>([1, 2, 3]);
+
+    const updateTimes = useCallback(() => {
+        $forceUpdate();
+        $forceUpdate();
+        $forceUpdate();
+        $forceUpdate();
+    }, []);
 
     useEffect(() => {
         console.log('The Queue Updated');
@@ -13,6 +21,12 @@ function App() {
 
     return (
         <div className="app-root">
+            <p
+                className="app-root-btn"
+                onClick={updateTimes}
+            >
+                Update times
+            </p>
             <p
                 className="app-root-btn"
                 onClick={() => {
