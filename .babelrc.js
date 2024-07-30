@@ -7,7 +7,12 @@ const basicBabelConfig = {
                 corejs: '3.36',
             },
         ],
-        '@babel/preset-react',
+        [
+            '@babel/preset-react',
+            {
+                automatic: true,
+            },
+        ],
         '@babel/preset-typescript',
     ],
 };

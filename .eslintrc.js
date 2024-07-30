@@ -7,7 +7,14 @@ module.exports = {
         es6: true,
         node: true,
     },
-    extends: ['eslint:recommended', 'plugin:react/recommended', 'prettier', 'plugin:prettier/recommended'],
+    extends: [
+        'eslint:recommended',
+        'plugin:react/recommended',
+        'prettier',
+        'plugin:prettier/recommended',
+        'plugin:react/jsx-runtime',
+        'plugin:@typescript-eslint/recommended',
+    ],
     parser: '@typescript-eslint/parser',
     parserOptions: {
         ecmaVersion: 6,
@@ -25,5 +32,7 @@ module.exports = {
         'prettier/prettier': [2, {}, { usePrettierrc: true }],
         'react/no-deprecated': 0,
         'react/prop-types': 0,
+        '@typescript-eslint/explicit-module-boundary-types': 0,
+        '@typescript-eslint/no-explicit-any': 0,
     },
 };
