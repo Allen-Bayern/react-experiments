@@ -104,6 +104,18 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
 
     const queue = useMemo(
         () => ({
+            batchEnqueue(...values: T[]) {
+                values.forEach(value => {
+                    enqueueWithoutRender(value);
+                });
+
+                randomIntChange.current();
+            },
+            batchEnqueueWithoutRender(...values: T[]) {
+                values.forEach(value => {
+                    enqueueWithoutRender(value);
+                });
+            },
             clear() {
                 clearWithoutRender();
                 randomIntChange.current();
