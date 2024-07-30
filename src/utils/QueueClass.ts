@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 type IterMethod<T, Return = void> = (item: T, index: number, q: Queue<T>) => Return;
 
 const createNode = <T>(value: T): LinkedNode<T> => ({
@@ -40,19 +39,18 @@ export class Queue<T = unknown> {
     }
 
     enqueue(v: T) {
-        const currentNode = createNode(v);
+        const node = createNode(v);
 
         if (!this.__head) {
-            this.__head = currentNode;
+            this.__head = node;
         } else if (this.__tail) {
-            this.__tail.nextNode = currentNode;
+            this.__tail.nextNode = node;
         }
 
-        this.__tail = currentNode;
+        this.__tail = node;
         this.__size++;
     }
 
-    // eslint-disable-next-line no-unused-vars
     forEach(cb: IterMethod<T>) {
         let realIndex = 0;
         let { __head: currentNode } = this;
@@ -69,7 +67,6 @@ export class Queue<T = unknown> {
 
     map<R = unknown>(cb: IterMethod<T, R>) {
         const res: R[] = [];
-
         this.forEach((item, index, self) => {
             res.push(cb(item, index, self));
         });
@@ -92,5 +89,9 @@ export class Queue<T = unknown> {
             yield currentNode.value;
             ({ nextNode: currentNode } = currentNode);
         }
+    }
+
+    static createQueue<U>(initIterValue: Iterable<U>) {
+        return new Queue<U>([...initIterValue]);
     }
 }
