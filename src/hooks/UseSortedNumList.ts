@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useList } from './UseList';
+import { useList } from './UseListHook';
 
 /** 自动保持有序数组hook */
 export function useSortedNumList(list: number[] = [], sortMethod = (a: number, b: number) => a - b) {

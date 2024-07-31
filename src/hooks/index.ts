@@ -1,7 +1,7 @@
 export { useCount } from './UseCount';
 export { useForceUpdate } from './UseForceUpdate';
 export { useFunction } from './UseFunction';
-export { useList } from './UseList';
+export { useList } from './UseListHook';
 export { usePolling } from './UsePolling';
 export { useQueue } from './UseQueue';
 export { useSet } from './UseSet';
