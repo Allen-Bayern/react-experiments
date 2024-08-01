@@ -3,6 +3,7 @@ export { useForceUpdate } from './UseForceUpdate';
 export { useFunction } from './UseFunction';
 export { useList } from './UseList';
 export { usePolling } from './UsePolling';
+export { useThrottleWrapper, useThrottledFunction } from './UsePThrottle';
 export { useQueue } from './UseQueue';
 export { useSet } from './UseSet';
 export { useSortedNumList } from './UseSortedNumList';
