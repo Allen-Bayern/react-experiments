@@ -2,6 +2,7 @@ export { useCount } from './UseCount';
 export { useForceUpdate } from './UseForceUpdate';
 export { useFunction } from './UseFunction';
 export { useList } from './UseList';
+export { useLockFunction } from './UseLockFunction';
 export { usePolling } from './UsePolling';
 export { useThrottleWrapper, useThrottledFunction } from './UsePThrottle';
 export { useQueue } from './UseQueue';
