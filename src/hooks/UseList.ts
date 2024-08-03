@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import deepFreeze from 'deep-freeze-strict';
 import clone from 'clone';
-import { getRandomInt } from '@/utils';
+import shuffleArray from 'shuffle-array';
 
 /** 数组hook */
 export function useList<List extends unknown[] = unknown[]>(list: List | null = null) {
@@ -187,15 +187,14 @@ export function useList<List extends unknown[] = unknown[]>(list: List | null = 
         },
         /** 乱序数组 */
         shuffle(): void {
-            const indexArray: number[] = [];
-            while (indexArray.length < arr.length) {
-                const i = getRandomInt({ to: arr.length });
-                if (!indexArray.includes(i)) {
-                    indexArray.push(i);
-                }
-            }
-
-            setArr(oldArray => deepFreeze(indexArray.map(i => oldArray[i])) as unknown as Readonly<List>);
+            setArr(
+                oldArray =>
+                    deepFreeze(
+                        shuffleArray(clone(oldArray as unknown as List[number][]), {
+                            copy: true,
+                        })
+                    ) as unknown as Readonly<List>
+            );
         },
         // eslint-disable-next-line no-unused-vars
         sort(sortCb?: (a: List[number], b: List[number]) => number): void {
