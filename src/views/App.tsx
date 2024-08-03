@@ -1,100 +1,33 @@
-import { useEffect, useCallback } from 'react';
-import { useQueue, useForceUpdate } from '@/hooks';
-import { getRandomInt } from '@/utils';
+import React from 'react';
 import './_App.scss';
 
-function App() {
-    const $forceUpdate = useForceUpdate();
-    const queue = useQueue<number>([1, 2, 3]);
+const { useRef, useCallback } = React;
 
-    const updateTimes = useCallback(() => {
-        $forceUpdate();
-        $forceUpdate();
-        $forceUpdate();
-        $forceUpdate();
+function App() {
+    const num = useRef(0);
+
+    const addOne = useCallback(() => {
+        num.current += 1;
     }, []);
 
-    useEffect(() => {
-        console.log('The Queue Updated');
-        console.log(queue.toArray());
-    }, [queue]);
+    const printLatestNum = useCallback(() => {
+        console.log(num.current);
+    }, []);
 
     return (
         <div className="app-root">
-            <p
-                className="app-root-btn"
-                onClick={updateTimes}
+            <button
+                type="button"
+                onClick={addOne}
             >
-                Update times
-            </p>
-            <p
-                className="app-root-btn"
-                onClick={() => {
-                    queue.enqueue(getRandomInt());
-                }}
+                add one
+            </button>
+            <button
+                type="button"
+                onClick={printLatestNum}
             >
-                Enqueue a random number
-            </p>
-            <p
-                className="app-root-btn"
-                onClick={() => {
-                    queue.enqueueWithoutRender(getRandomInt());
-                }}
-            >
-                Enqueue a random number without re-render
-            </p>
-            <p
-                className="app-root-btn"
-                onClick={() => {
-                    queue.dequeue();
-                }}
-            >
-                Dequeue
-            </p>
-            <p
-                className="app-root-btn"
-                onClick={() => {
-                    queue.clear();
-                }}
-            >
-                Clear the queue
-            </p>
-
-            <p
-                className="app-root-btn"
-                onClick={() => {
-                    console.log(queue.size);
-                }}
-            >
-                Get size of the queue
-            </p>
-
-            <p
-                className="app-root-btn"
-                onClick={() => {
-                    console.log(queue.getReadonlyCopyOfQueue());
-                }}
-            >
-                See the queue
-            </p>
-
-            <p
-                className="app-root-btn"
-                onClick={() => {
-                    console.log(queue.map(val => 2 * val));
-                }}
-            >
-                Map new array
-            </p>
-
-            <p
-                className="app-root-btn"
-                onClick={() => {
-                    console.log(queue.toArray());
-                }}
-            >
-                to Array
-            </p>
+                print latest
+            </button>
         </div>
     );
 }
