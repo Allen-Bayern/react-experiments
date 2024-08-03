@@ -6,16 +6,13 @@ import deepClone from 'clone';
 type MaybeQueueNode<T> = LinkedNode<T> | null;
 
 /** to create a queue node */
-const createQueueNode = <T>(value: T): LinkedNode<T> => {
-    return {
-        nextNode: null,
-        value,
-    };
-};
+const createQueueNode = <T>(value: T): LinkedNode<T> => ({
+    nextNode: null,
+    value,
+});
 
 /** A hook using queue structure like `yocto-queue` */
 export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
-    // eslint-disable-next-line no-unused-vars
     type IterMethod<R = void> = (value: T, index: number, node: LinkedNode<T>) => R;
 
     const [randomInt, setRandomInt] = useState(getRandomInt());
@@ -119,6 +116,40 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
             clear() {
                 clearWithoutRender();
                 randomIntChange.current();
+            },
+            elementAtIndex(index: number) {
+                const { current: qSize } = queueSize;
+
+                if (!headNode.current || index < 0 || index >= qSize) {
+                    return null;
+                }
+
+                if (!index) {
+                    return headNode.current.value;
+                }
+
+                if (index === qSize - 1) {
+                    return tailNode.current?.value ?? null;
+                }
+
+                let { value: realValue } = headNode.current;
+
+                let currentIndex = 0;
+                let currentNode = headNode.current;
+                while (currentIndex < index) {
+                    if (++currentIndex === index) {
+                        ({ value: realValue } = currentNode);
+                        break;
+                    }
+
+                    if (currentNode.nextNode) {
+                        ({ nextNode: currentNode } = currentNode);
+                    } else {
+                        break;
+                    }
+                }
+
+                return realValue;
             },
             enqueue(value: T) {
                 enqueueWithoutRender(value);
