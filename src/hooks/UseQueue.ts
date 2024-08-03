@@ -17,16 +17,16 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
 
     const [randomInt, setRandomInt] = useState(getRandomInt());
 
-    const randomIntChange = useRef(() => {
+    const headNode = useRef<MaybeQueueNode<T>>(null);
+    const tailNode = useRef<MaybeQueueNode<T>>(null);
+    const queueSize = useRef(0);
+
+    const randomIntChange = useCallback(() => {
         setRandomInt(oldValue => {
             const tmp = getRandomInt();
             return tmp === oldValue ? oldValue + 1 : tmp;
         });
-    });
-
-    const headNode = useRef<MaybeQueueNode<T>>(null);
-    const tailNode = useRef<MaybeQueueNode<T>>(null);
-    const queueSize = useRef(0);
+    }, []);
 
     const clearWithoutRender = useCallback(() => {
         headNode.current = null;
@@ -105,8 +105,7 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
                 values.forEach(value => {
                     enqueueWithoutRender(value);
                 });
-
-                randomIntChange.current();
+                randomIntChange();
             },
             batchEnqueueWithoutRender(...values: T[]) {
                 values.forEach(value => {
@@ -115,7 +114,7 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
             },
             clear() {
                 clearWithoutRender();
-                randomIntChange.current();
+                randomIntChange();
             },
             elementAtIndex(index: number) {
                 const { current: qSize } = queueSize;
@@ -153,12 +152,12 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
             },
             enqueue(value: T) {
                 enqueueWithoutRender(value);
-                randomIntChange.current();
+                randomIntChange();
             },
             enqueueWithoutRender,
             dequeue() {
                 const dequeued = dequeueWithoutRender();
-                randomIntChange.current();
+                randomIntChange();
                 return dequeued;
             },
             dequeueWithoutRender,
@@ -187,7 +186,7 @@ export const useQueue = <T = unknown>(initValueAsArray: T[] = []) => {
              * and you need to update the view,
              * you can manually invoke this method to trigger re-rendering.
              */
-            updateView: randomIntChange.current,
+            updateView: randomIntChange,
             get size() {
                 return queueSize.current;
             },
