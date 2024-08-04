@@ -38,7 +38,7 @@ export class Queue<T = unknown> {
         return poppedNode.value;
     }
 
-    enqueue(v: T) {
+    private _enqueueOne(v: T) {
         const node = createNode(v);
 
         if (!this.__head) {
@@ -51,6 +51,12 @@ export class Queue<T = unknown> {
         this.__size++;
     }
 
+    enqueue(...values: T[]) {
+        values.forEach(val => {
+            this._enqueueOne(val);
+        });
+    }
+
     forEach(cb: IterMethod<T>) {
         let realIndex = 0;
         let { __head: currentNode } = this;
@@ -59,10 +65,6 @@ export class Queue<T = unknown> {
             cb(currentNode.value, realIndex++, this);
             ({ nextNode: currentNode } = currentNode);
         }
-    }
-
-    get size() {
-        return this.__size;
     }
 
     map<R = unknown>(cb: IterMethod<T, R>) {
@@ -80,6 +82,10 @@ export class Queue<T = unknown> {
 
     toArray() {
         return this.map(item => item);
+    }
+
+    get size() {
+        return this.__size;
     }
 
     *[Symbol.iterator]() {
