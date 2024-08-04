@@ -1,6 +1,7 @@
 export { useCount } from './UseCount';
 export { useForceUpdate } from './UseForceUpdate';
 export { useFunction } from './UseFunction';
+export { useHammerInstance } from './UseHammerInstance';
 export { useList } from './UseList';
 export { useLockFunction } from './UseLockFunction';
 export { usePolling } from './UsePolling';
