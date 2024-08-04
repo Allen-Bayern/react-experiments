@@ -1,3 +1,4 @@
+export { useArray } from './UseArray';
 export { useCount } from './UseCount';
 export { useForceUpdate } from './UseForceUpdate';
 export { useFunction } from './UseFunction';
