@@ -10,6 +10,19 @@ export class Queue<T = unknown> {
     private __tail: LinkedNode<T> | null = null;
     private __size = 0;
 
+    private _enqueueOne(v: T) {
+        const node = createNode(v);
+
+        if (!this.__head) {
+            this.__head = node;
+        } else if (this.__tail) {
+            this.__tail.nextNode = node;
+        }
+
+        this.__tail = node;
+        this.__size++;
+    }
+
     constructor(arr: T[] = []) {
         this.clear();
 
@@ -36,19 +49,6 @@ export class Queue<T = unknown> {
         this.__size--;
 
         return poppedNode.value;
-    }
-
-    private _enqueueOne(v: T) {
-        const node = createNode(v);
-
-        if (!this.__head) {
-            this.__head = node;
-        } else if (this.__tail) {
-            this.__tail.nextNode = node;
-        }
-
-        this.__tail = node;
-        this.__size++;
     }
 
     enqueue(...values: T[]) {
