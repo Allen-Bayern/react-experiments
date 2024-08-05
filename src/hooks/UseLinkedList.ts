@@ -69,6 +69,7 @@ export const useLinkedList = <T = unknown>(initVal: Iterable<T> | null = null) =
         }
 
         _midNode.current = tempNode;
+        _prevIndex.current = latestMidIndex;
     }, []);
 
     // eslint-disable-next-line @typescript-eslint/no-inferrable-types
