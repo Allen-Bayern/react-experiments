@@ -10,3 +10,8 @@ interface LinkedNode<T> {
     value: T;
     nextNode: LinkedNode<T> | null;
 }
+
+interface BiDirectionNode<T> extends LinkedNode<T> {
+    prevNode: BiDirectionNode<T> | null;
+    nextNode: BiDirectionNode<T> | null;
+}

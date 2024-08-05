@@ -4,14 +4,19 @@ import './_App.scss';
 const { useRef, useCallback } = React;
 
 function App() {
-    const num = useRef(0);
+    const numInfo = useRef({
+        num: 0,
+        get num2() {
+            return Math.floor(this.num / 2);
+        },
+    });
 
     const addOne = useCallback(() => {
-        num.current += 1;
+        numInfo.current.num += 1;
     }, []);
 
     const printLatestNum = useCallback(() => {
-        console.log(num.current);
+        console.log(numInfo.current);
     }, []);
 
     return (

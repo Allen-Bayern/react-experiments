@@ -8,6 +8,7 @@ export { useLockFunction } from './UseLockFunction';
 export { usePolling } from './UsePolling';
 export { useThrottleWrapper, useThrottledFunction } from './UsePThrottle';
 export { useQueue } from './UseQueue';
+export { default as useRandomInt } from './UseRandomInt';
 export { useSet } from './UseSet';
 export { useSortedNumList } from './UseSortedNumList';
 export { useTimeoutFn } from './UseTimeoutFn';
