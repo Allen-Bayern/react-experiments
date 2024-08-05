@@ -10,6 +10,7 @@ const createBiDirectionNode = <T = unknown>(value: T): BiDirectionNode<T> => ({
 export const useLinkedList = <T = unknown>(initVal: Iterable<T> | null = null) => {
     const [randomInt, updateRandomInt] = useRandomInt();
 
+    // private refs
     const _headNode = useRef<BiDirectionNode<T> | null>(null);
     const _tailNode = useRef<BiDirectionNode<T> | null>(null);
 
@@ -24,6 +25,7 @@ export const useLinkedList = <T = unknown>(initVal: Iterable<T> | null = null) =
         },
     });
 
+    // private methods
     const _updateMiddleNode = useCallback(() => {
         if ((!_headNode.current || !_tailNode.current) && !_sizeInfo.current.size) {
             _midNode.current = null;
@@ -125,6 +127,7 @@ export const useLinkedList = <T = unknown>(initVal: Iterable<T> | null = null) =
         return value;
     }, []);
 
+    // public methods
     const forEach = useCallback((method: (value: T, index: number) => void): void => {
         if (!_headNode.current) {
             return;
@@ -150,7 +153,7 @@ export const useLinkedList = <T = unknown>(initVal: Iterable<T> | null = null) =
 
     const linkedList = useMemo(() => {
         return {
-            atIndex(i: number) {
+            atIndex(i: number): T {
                 const { size, midIndex } = _sizeInfo.current;
 
                 if (!_headNode.current || !_tailNode.current) {
@@ -194,7 +197,43 @@ export const useLinkedList = <T = unknown>(initVal: Iterable<T> | null = null) =
                 return currentNode!.value;
             },
             forEach,
-            map<R = unknown>(method: (value: T, index: number) => R) {
+            includes(elem: T): boolean {
+                if (!_headNode.current || !_tailNode.current) {
+                    return false;
+                }
+
+                let currentNode: BiDirectionNode<T> | null = _headNode.current;
+                let count = 0;
+                while (count < _sizeInfo.current.size && currentNode) {
+                    if (currentNode.value === elem) {
+                        return true;
+                    }
+
+                    ({ nextNode: currentNode } = currentNode);
+                    count += 1;
+                }
+
+                return false;
+            },
+            indexOf(elem: T): number {
+                if (!_headNode.current || !_tailNode.current) {
+                    return -1;
+                }
+
+                let currentNode: BiDirectionNode<T> | null = _headNode.current;
+                let count = 0;
+                while (count < _sizeInfo.current.size && currentNode) {
+                    if (currentNode.value === elem) {
+                        return count;
+                    }
+
+                    ({ nextNode: currentNode } = currentNode);
+                    count += 1;
+                }
+
+                return -1;
+            },
+            map<R = unknown>(method: (value: T, index: number) => R): R[] {
                 const res: R[] = [];
                 forEach((value, index) => {
                     res.push(method(value, index));
@@ -202,42 +241,76 @@ export const useLinkedList = <T = unknown>(initVal: Iterable<T> | null = null) =
 
                 return res;
             },
-            pop() {
+            pop(): T | null {
                 const popped = _pop();
                 _subscribe();
                 return popped;
             },
-            push(...values: T[]) {
+            popWithoutRender(): T | null {
+                const popped = _pop();
+                _subscribe(false);
+                return popped;
+            },
+            push(...values: T[]): boolean {
                 if (values.length) {
                     values.forEach(value => {
                         _enqueueOne(value);
                     });
 
                     _subscribe();
+
+                    return true;
                 }
+
+                return false;
             },
-            pushWithoutRender(...values: T[]) {
+            pushWithoutRender(...values: T[]): boolean {
                 if (values.length) {
                     values.forEach(value => {
                         _enqueueOne(value);
                     });
                     _subscribe(false);
+
+                    return true;
                 }
+
+                return false;
             },
-            shift() {
+            shift(): T | null {
                 const shifted = _shift();
                 _subscribe();
                 return shifted;
             },
-            shiftWithoutRender() {
+            shiftWithoutRender(): T | null {
                 const shifted = _shift();
                 _subscribe(false);
                 return shifted;
+            },
+            toArray(): T[] {
+                const res: T[] = [];
+                forEach(val => {
+                    res.push(val);
+                });
+
+                return res;
             },
 
             // getters
             get size(): number {
                 return _sizeInfo.current.size;
+            },
+
+            // iter
+            *[Symbol.iterator]() {
+                if (!_headNode.current || !_tailNode.current) {
+                    return;
+                }
+
+                let currentNode: BiDirectionNode<T> | null = _headNode.current;
+                while (currentNode) {
+                    yield currentNode.value;
+                    currentNode = currentNode.nextNode;
+                }
             },
         };
     }, [randomInt]);
